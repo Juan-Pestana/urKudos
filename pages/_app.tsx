@@ -1,6 +1,21 @@
+import { Montserrat } from '@next/font/google'
+import { AppProps } from 'next/app'
 import '../styles/globals.css'
-import type { AppProps } from 'next/app'
-
-export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+const custom_font = Montserrat({
+  subsets: ['latin'],
+})
+function MyApp({ Component, pageProps }: AppProps) {
+  return (
+    <>
+      <style jsx global>
+        {`
+          :root {
+            --custom-font: ${custom_font.style.fontFamily};
+          }
+        `}
+      </style>
+      <Component {...pageProps} />;
+    </>
+  )
 }
+export default MyApp
