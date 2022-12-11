@@ -1,14 +1,14 @@
 export const posts = [
   {
     id: 2,
-    user: 1,
+    owner: 3,
     text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam cupiditate quod veritatis culpa enim officia molestiae impedit explicabo vel maiores?',
     image: 'https://i.pravatar.cc/800',
     likes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], //user ID
   },
   {
     id: 2,
-    user: 1,
+    owner: 2,
     text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam cupiditate quod veritatis culpa enim officia molestiae impedit explicabo vel maiores?',
     image: 'https://i.pravatar.cc/800',
     likes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], //user ID
@@ -20,7 +20,7 @@ export const comments = [
     id: 2,
     text: 'Lorem ipsum dolor sit amet.',
     post: 2,
-    user: 1,
+    user: 3,
     parent: undefined,
   },
   {

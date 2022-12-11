@@ -1,9 +1,41 @@
+//import {useState} from 'react'
+
 import Head from 'next/head'
 import Image from 'next/image'
 import Posts from './components/Posts'
 import { users, posts, comments } from './data.js'
 
+interface Iuser {
+  id: number
+  userName: string
+  position: string
+  image: string
+}
+
+interface Ipost {
+  id: number
+  owner: number
+  text: string
+  image: string
+  likes: number[]
+}
+
+interface Icomments {
+  id: number
+  text: string
+  post: number
+  user: number
+  parent?: number
+}
+
+const initialUsers: Iuser[] = users
+const initialComments: Icomments[] = comments
+const initialPosts: Ipost[] = posts
+
 export default function FirstPage() {
+  // const theUsers: Iuser[] = users
+  // const thePosts: Ipost[] = posts
+  // const theComments: Icomments[] = comments
   return (
     <>
       <Head>

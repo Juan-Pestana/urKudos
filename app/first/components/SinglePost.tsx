@@ -5,7 +5,31 @@ import PostContent from './PostContent'
 import LikesComents from './LikesComents'
 import Coments from './Coments'
 
-export default function SinglePost() {
+interface Iuser {
+  id: number
+  userName: string
+  position: string
+  image: string
+}
+
+interface Icomments {
+  id: number
+  text: string
+  post: number
+  user?: Iuser
+  parent?: number
+}
+
+interface IsinglePostProps {
+  id: number
+  text: string
+  image: string
+  likes: number[]
+  owner: Iuser | undefined
+  comments: Icomments[]
+}
+
+export default function SinglePost(post: IsinglePostProps) {
   return (
     <div className="border-solid border-2 border-gray-500 rounded-lg">
       <PostUser />
