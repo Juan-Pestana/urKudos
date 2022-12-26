@@ -8,7 +8,7 @@ const nextConfig = {
     appDir: true,
   },
   images: {
-    domains: ['avataaars.io', 'i.pravatar.cc'],
+    domains: ['avataaars.io', 'i.pravatar.cc', '127.0.0.1'],
   },
 }
 

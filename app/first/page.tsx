@@ -5,37 +5,7 @@ import Image from 'next/image'
 import Posts from './components/Posts'
 import { users, posts, comments } from './data.js'
 
-interface Iuser {
-  id: number
-  userName: string
-  position: string
-  image: string
-}
-
-interface Ipost {
-  id: number
-  owner: number
-  text: string
-  image: string
-  likes: number[]
-}
-
-interface Icomments {
-  id: number
-  text: string
-  post: number
-  user: number
-  parent?: number
-}
-
-const initialUsers: Iuser[] = users
-const initialComments: Icomments[] = comments
-const initialPosts: Ipost[] = posts
-
-export default function FirstPage() {
-  // const theUsers: Iuser[] = users
-  // const thePosts: Ipost[] = posts
-  // const theComments: Icomments[] = comments
+export default async function FirstPage() {
   return (
     <>
       <Head>
@@ -45,6 +15,7 @@ export default function FirstPage() {
       </Head>
 
       <section className="flex flex-col justify-center sm:w-3/4  lg:w-1/2 xl:w-2/6 mx-auto py-3">
+        {/* @ts-expect-error Server Component */}
         <Posts />
       </section>
     </>

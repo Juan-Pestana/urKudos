@@ -1,67 +1,78 @@
-import React from 'react'
+import React, { Component } from 'react'
 import Image from 'next/image'
 import SinglePost from './SinglePost'
 
-import { posts, users, comments } from '../data'
+import PocketBase from 'pocketbase'
 
-interface Iuser {
-  id: number
-  userName: string
-  position: string
-  image: string
+export const dynamic = 'auto',
+  dynamicParams = true,
+  revalidate = 0,
+  fetchCache = 'auto',
+  runtime = 'nodejs'
+
+const getPosts = async () => {
+  const pb = new PocketBase('http://127.0.0.1:8090')
+  const records = await pb
+    .collection('posts')
+    .getFullList(200, { expand: 'owner, comments, comments.user' })
+  return records as any[]
 }
 
-interface Ipost {
-  id: number
-  owner: number
-  text: string
-  image: string
-  likes: number[]
-}
+//console.log(getPosts())
 
-interface Icomments {
-  id: number
-  text: string
-  post: number
-  user: number
-  parent?: number
-}
+export default async function Posts() {
+  const apiPosts = await getPosts()
 
-export default function Posts() {
-  const initialPosts: Ipost[] = posts
-  const initialComments: Icomments[] = comments
-  const initialUsers: Iuser[] = users
+  const posts = apiPosts.map((post) => ({
+    id: post.id,
+    user: {
+      userName: post.expand.owner.name,
+      image: post.expand.owner.avatar,
+      position: post.expand.owner.department,
+      id: post.expand.owner.id,
+    },
+    text: post.text,
+    image: post.image,
+    likes: [2, 3, 4, 5, 6, 7, 8, 9, 10],
+    comments: post.expand.comments.map((comment: any) => ({
+      id: comment.id,
+      user: {
+        name: comment.expand.user.name,
+        id: comment.expand.user.id,
+        image: comment.expand.user.avatar,
+      },
+      text: comment.text,
+      responses: comment.responses,
+    })),
+  }))
 
-  //console.log(initialUsers.find((user) => user.id === 2))
-
-  let losPost = initialPosts.map((post) => {
-    //console.log(post.owner)
-
-    return {
-      ...post,
-      owner: initialUsers.find((user) => user.id === post.owner),
-      someComments: initialComments
-        .filter((comment) => comment.id === post.id)
-        .map((comment) => {
-          return {
-            ...comment,
-            user: users.find((user) => comment.user === user.id),
-          }
-        }),
-    }
-  })
+  // let losPost = initialPosts.map((post) => {
+  //   return {
+  //     ...post,
+  //     owner: initialUsers.find((user) => user.id === post.owner),
+  //     someComments: initialComments
+  //       .filter((comment) => comment.post === post.id)
+  //       .map((comment) => {
+  //         return {
+  //           ...comment,
+  //           user: users.find((user) => comment.user === user.id),
+  //           responses: [1, 2],
+  //         }
+  //       }),
+  //   }
+  // })
 
   return (
     <div>
-      {losPost.map((post) => (
+      {posts.map((post) => (
         <SinglePost
           key={post.id}
           id={post.id}
           text={post.text}
           image={post.image}
           likes={post.likes}
-          owner={post.owner}
-          comments={post.someComments}
+          owner={post.user}
+          comments={post.comments}
         />
       ))}
     </div>

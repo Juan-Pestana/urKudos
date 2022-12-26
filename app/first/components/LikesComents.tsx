@@ -1,14 +1,22 @@
-import React from 'react'
+type LikesComentsProps = {
+  postLikes: number[]
+  postCommentsNum: number
+}
 
-export default function LikesComents() {
+export default function LikesComents({
+  postLikes,
+  postCommentsNum,
+}: LikesComentsProps) {
+  //console.log(postCommentsNum)
+
   return (
     <>
       <div className="flex py-4 px-2 text-slate-400">
         <div>
-          <span>230</span> Likes
+          <span>{postLikes.length}</span> Likes
         </div>
         <div className="flex-1 text-right text-slate-400">
-          <span>5</span>Comentarios
+          <span>{postCommentsNum}</span> Comentarios
         </div>
       </div>
       {/* Coments & Like buttons */}

@@ -6,18 +6,18 @@ import LikesComents from './LikesComents'
 import Coments from './Coments'
 
 interface Iuser {
-  id: number
+  id: string
   userName: string
   position: string
   image: string
 }
 
-interface Icomments {
-  id: number
+type Icomments = {
+  id: string
   text: string
   post: number
   user?: Iuser
-  parent?: number
+  responses: string[]
 }
 
 interface IsinglePostProps {
@@ -31,13 +31,21 @@ interface IsinglePostProps {
 
 export default function SinglePost(post: IsinglePostProps) {
   return (
-    <div className="border-solid border-2 border-gray-500 rounded-lg">
-      <PostUser />
-      <PostContent />
+    <div className="border-solid border-2 border-gray-500 rounded-lg mb-2">
+      <PostUser
+        postOwnerId={post.owner?.id}
+        postOwnerImage={post.owner?.image}
+        postOwnerName={post.owner?.userName}
+        postOwnerPosition={post.owner?.position}
+      />
+      <PostContent postText={post.text} postImage={post.image} />
       <div className="px-2">
-        <LikesComents />
+        <LikesComents
+          postLikes={post.likes}
+          postCommentsNum={post.comments.length}
+        />
         {/* coments */}
-        <Coments />
+        <Coments postComments={post.comments} />
       </div>
     </div>
   )
