@@ -1,6 +1,7 @@
 import './output.css'
 import { Montserrat } from '@next/font/google'
 import Image from 'next/image'
+import Link from 'next/link'
 
 const custom_font = Montserrat({
   subsets: ['latin'],
@@ -34,9 +35,15 @@ export default function RootLayout({
           </div>
           <div className="flex-1"></div>
           <nav className="flex gap-6">
-            <li className="list-none">About</li>
-            <li className="list-none">Home</li>
-            <li className="list-none">Blog</li>
+            <li className="list-none">
+              <Link href="/login">Login</Link>
+            </li>
+            <li className="list-none">
+              <Link href="/register">SignUp</Link>
+            </li>
+            <li className="list-none">
+              <Link href="/login">Profile</Link>
+            </li>
           </nav>
         </header>
         <main>{children}</main>
