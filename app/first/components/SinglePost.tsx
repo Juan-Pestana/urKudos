@@ -13,7 +13,7 @@ interface Iuser {
 interface IsinglePostProps {
   id: string
   text: string
-  image: string
+  image: { imgName: string; imgId: string }
   likes: number[]
   owner: Iuser | undefined
   comments: string[]
@@ -28,7 +28,7 @@ export default function SinglePost(post: IsinglePostProps) {
         postOwnerName={post.owner?.userName}
         postOwnerPosition={post.owner?.position}
       />
-      <PostContent postText={post.text} postImage={post.image} />
+      <PostContent postText={post.text} image={post.image} />
       <div className="px-2">
         {/* coments */}
 

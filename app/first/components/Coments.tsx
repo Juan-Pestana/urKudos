@@ -47,8 +47,6 @@ interface commentsProps {
 export default async function Coments({ postId }: commentsProps) {
   const allComments = await getComments(postId)
 
-  console.log(allComments.items[2])
-
   const comments = allComments.items.map((comment: any) => ({
     id: comment.id,
     text: comment.text,
@@ -61,8 +59,6 @@ export default async function Coments({ postId }: commentsProps) {
           )
         : [],
   }))
-
-  console.log(comments[0])
 
   return (
     <>

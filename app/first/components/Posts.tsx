@@ -14,7 +14,7 @@ const getPosts = async () => {
   const pb = new PocketBase('http://127.0.0.1:8090')
   const records = await pb
     .collection('posts')
-    .getFullList(200, { expand: 'owner' })
+    .getFullList(200, { expand: 'image,owner' })
   return records as any[]
 }
 
@@ -32,26 +32,10 @@ export default async function Posts() {
       id: post.expand.owner.id,
     },
     text: post.text,
-    image: post.image,
+    image: { imgName: post.expand.image.image, imgId: post.expand.image.id },
     likes: [2, 3, 4, 5, 6, 7, 8, 9, 10],
     comments: post.comments,
   }))
-
-  // let losPost = initialPosts.map((post) => {
-  //   return {
-  //     ...post,
-  //     owner: initialUsers.find((user) => user.id === post.owner),
-  //     someComments: initialComments
-  //       .filter((comment) => comment.post === post.id)
-  //       .map((comment) => {
-  //         return {
-  //           ...comment,
-  //           user: users.find((user) => comment.user === user.id),
-  //           responses: [1, 2],
-  //         }
-  //       }),
-  //   }
-  // })
 
   return (
     <div>

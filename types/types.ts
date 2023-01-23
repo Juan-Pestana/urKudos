@@ -24,7 +24,22 @@ export interface IsignUp {
   name?: string
   department: string
   username: string
+  avatar: string
   email: string
   password: string
   passwordConfirm: string
+}
+
+export interface Ilink {
+  image: string
+  favicon: string
+  description: string
+  siteName: string
+  title: string
+  url: string
+}
+
+export interface Iimage {
+  imgId: string
+  imgName: string
 }

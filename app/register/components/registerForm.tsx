@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { IsignUp } from '../../../types/types'
 import { pb } from '../../../pb/pocketBase'
+import { json } from 'stream/consumers'
 
 export default function RegisterForm() {
   const router = useRouter()
@@ -12,7 +13,17 @@ export default function RegisterForm() {
 
   const onSubmit = async (data: IsignUp) => {
     data.name = data.username
-    const record = await pb.collection('users').create(data)
+    const formData = new FormData()
+
+    formData.append('username', data.username)
+    formData.append('name', data.name)
+    formData.append('department', data.department)
+    formData.append('email', data.email)
+    formData.append('password', data.password)
+    formData.append('passwordConfirm', data.passwordConfirm)
+    formData.append('avatar', data.avatar[0])
+
+    const record = await pb.collection('users').create(formData)
     console.log(record)
     router.push('/login')
   }
@@ -42,6 +53,12 @@ export default function RegisterForm() {
               placeholder="Type your email..."
               className="my-4 w-full max-w-xs border-2 border-slate-600 bg-slate-500 p-3"
               {...register('email')}
+            />
+            <input
+              type="file"
+              placeholder="Type your email..."
+              className="my-4 w-full max-w-xs border-2 border-slate-600 bg-slate-500 p-3"
+              {...register('avatar')}
             />
             <input
               type="password"

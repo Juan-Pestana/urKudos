@@ -15,7 +15,6 @@ function LogingForm() {
       .collection('users')
       .authWithPassword(data.email, data.password)
 
-    console.log(authData)
     router.push('/first')
   }
 

@@ -1,4 +1,5 @@
 'use client'
+import { pb } from '../../../pb/pocketBase'
 import { useState } from 'react'
 import Image from 'next/image'
 import {
@@ -9,11 +10,58 @@ import {
   FaFile,
   FaShare,
 } from 'react-icons/fa'
+import { Ilink, Iimage } from '../../../types/types'
 
-type inputType = 'file' | 'link' | ''
+type inputType = 'image' | 'link' | 'video' | ''
 
 export default function PostInput() {
   const [inputType, setInputType] = useState<inputType>('')
+  const [link, setLink] = useState<Ilink>()
+  const [image, setImage] = useState<Iimage>()
+  const [text, setText] = useState('')
+  const [video, setVideo] = useState('')
+
+  const handleLinkchange: React.ChangeEventHandler<HTMLInputElement> = async (
+    e
+  ) => {
+    if (e.target.value.includes('https://')) {
+      const data = await fetch(
+        `https://link-preview-green.vercel.app/api/link-preview?url=${e.target.value}`,
+        {
+          method: 'GET',
+        }
+      )
+      const linkData = await data.json()
+
+      if (linkData.success) {
+        console.log(linkData)
+        const alink: Ilink = linkData.result.siteData
+        setLink({
+          ...alink,
+        })
+      }
+    }
+  }
+
+  const handleVideochange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    if (e.target.value.includes('https://www.youtube.com')) {
+      let embVideo = e.target.value.replace('watch?v=', 'embed/')
+      setVideo(embVideo)
+    }
+  }
+
+  const handleImagechange: React.ChangeEventHandler<HTMLInputElement> = async (
+    e
+  ) => {
+    //console.log(e.target.value)
+
+    if (e.target.files) {
+      const formData = new FormData()
+      formData.append('image', e.target.files[0])
+      const imageData = await pb.collection('images').create(formData)
+      setImage({ imgId: imageData.id, imgName: imageData.image })
+    }
+  }
 
   return (
     <>
@@ -46,12 +94,15 @@ export default function PostInput() {
         <div>
           <div className="flex gap-2 ">
             <button
-              onClick={() => setInputType('file')}
+              onClick={() => setInputType('image')}
               className="flex flex-1 justify-center rounded-md items-center gap-3 text-xl py-2 px-4  hover:bg-slate-500"
             >
               <FaImage /> Image
             </button>
-            <button className="flex flex-1 justify-center rounded-md items-center gap-3 text-xl py-2 px-4  hover:bg-slate-500">
+            <button
+              onClick={() => setInputType('video')}
+              className="flex flex-1 justify-center rounded-md items-center gap-3 text-xl py-2 px-4  hover:bg-slate-500"
+            >
               <FaVideo /> Video
             </button>
             <button
@@ -64,10 +115,11 @@ export default function PostInput() {
               <FaStar /> Star
             </button>
           </div>
-          {inputType === 'file' && (
+          {inputType === 'image' && (
             <div className="p-2">
               <label>
                 <input
+                  onChange={handleImagechange}
                   type="file"
                   className="text-sm text-grey-500 rounded-lg
             file:mr-5 file:py-2 file:px-6
@@ -85,6 +137,7 @@ export default function PostInput() {
             <div className="p-2">
               <label>
                 <input
+                  onChange={handleLinkchange}
                   type="text"
                   className=" text-grey-500 rounded-lg p-3
              bg-slate-500 w-full h-14 text-lg"
@@ -92,6 +145,67 @@ export default function PostInput() {
                 />
               </label>
             </div>
+          )}
+          {inputType === 'video' && (
+            <div className="p-2">
+              <label>
+                <input
+                  onChange={handleVideochange}
+                  type="text"
+                  className=" text-grey-500 rounded-lg p-3
+             bg-slate-500 w-full h-14 text-lg"
+                  placeholder="https://www.youtube.com/watch?..."
+                />
+              </label>
+            </div>
+          )}
+        </div>
+        {/* previews*/}
+        <div className="p-2">
+          {image && (
+            <div className="object-cover">
+              <Image
+                className="w-full"
+                src={`http://127.0.0.1:8090/api/files/images/${image.imgId}/${image.imgName}`}
+                alt="something"
+                width="300"
+                height="300"
+              />
+            </div>
+          )}
+          {video && (
+            <div className="w-full aspect-video">
+              <iframe
+                src={video}
+                allowFullScreen
+                className="w-full h-full"
+              ></iframe>
+            </div>
+          )}
+          {link && (
+            <a href={link.url} target="_blank" rel="noreferrer">
+              <div className="flex gap-2 bg-slate-700">
+                <div
+                  className={
+                    link.image
+                      ? 'object-cover w-1/4 h-full'
+                      : 'w-1/5 flex items-center justify-center bg-slate-600'
+                  }
+                >
+                  <img
+                    src={link.image ? link.image : link.favicon}
+                    alt={link.title}
+                    className={link.image ? 'w-full' : 'w-12'}
+                  />
+                </div>
+                <div className="w-3/4 p-3">
+                  <h1 className="overflow-hidden whitespace-nowrap text-ellipsis mb-4">
+                    {link.title}
+                  </h1>
+                  <p>{link.description}</p>
+                </div>
+              </div>
+            </a>
           )}
         </div>
       </div>
