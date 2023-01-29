@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { IsignUp } from '../../../types/types'
-import { pb } from '../../../pb/pocketBase'
+import { pb } from '../../../sevices/pocketBase'
 import { json } from 'stream/consumers'
 
 export default function RegisterForm() {

@@ -32,10 +32,8 @@ export default function SinglePost(post: IsinglePostProps) {
       <div className="px-2">
         {/* coments */}
 
-        {post.comments && post.comments.length ? (
-          /* @ts-expect-error Server Component */
-          <Coments postId={post.id} />
-        ) : null}
+        {/* @ts-expect-error Server Component */}
+        <Coments postId={post.id} />
       </div>
     </div>
   )

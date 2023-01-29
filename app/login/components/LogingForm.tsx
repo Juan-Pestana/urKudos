@@ -4,18 +4,45 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { Ilogin } from '../../../types/types'
-import { pb } from '../../../pb/pocketBase'
+import { pb } from '../../../sevices/pocketBase'
 
 function LogingForm() {
   const router = useRouter()
   const { handleSubmit, register } = useForm<Ilogin>()
 
   const onSubmit = async (data: Ilogin) => {
-    const authData = await pb
-      .collection('users')
-      .authWithPassword(data.email, data.password)
+    const result = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data),
+    })
 
-    router.push('/first')
+    // const res = await result.json()
+
+    if (result) {
+      console.log(result)
+      //console.log(pb.authStore.model)
+      router.push('/first')
+    } else {
+      alert('Credential is not valid')
+    }
+  }
+
+  const logOut = async () => {
+    const result = await fetch('/api/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+
+    console.log(result)
+
+    //console.log(pb.authStore.model?.id)
   }
 
   return (
@@ -53,6 +80,13 @@ function LogingForm() {
           </div>
         </div>
       </form>
+      <button
+        onClick={logOut}
+        className="my-4 w-full max-w-xs border-2 border-slate-600 bg-slate-700 p-3 text-white"
+        type="submit"
+      >
+        LogOut
+      </button>
     </main>
   )
 }

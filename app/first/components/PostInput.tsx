@@ -1,6 +1,6 @@
 'use client'
-import { pb } from '../../../pb/pocketBase'
-import { useState } from 'react'
+import { pb } from '../../../sevices/pocketBase'
+import { useRef, useState } from 'react'
 import Image from 'next/image'
 import {
   FaImage,
@@ -17,9 +17,9 @@ type inputType = 'image' | 'link' | 'video' | ''
 export default function PostInput() {
   const [inputType, setInputType] = useState<inputType>('')
   const [link, setLink] = useState<Ilink>()
-  const [image, setImage] = useState<Iimage>()
-  const [text, setText] = useState('')
+  const [image, setImage] = useState<Iimage | null>(null)
   const [video, setVideo] = useState('')
+  const textRef = useRef<HTMLTextAreaElement>(null)
 
   const handleLinkchange: React.ChangeEventHandler<HTMLInputElement> = async (
     e
@@ -63,9 +63,40 @@ export default function PostInput() {
     }
   }
 
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault()
+
+    const data = {
+      owner: 'ubusoy699ervf7d',
+      text: textRef.current ? textRef.current.value : undefined,
+      link,
+      image: image?.imgId,
+      video,
+    }
+
+    if (data.text || data.link || data.image || data.video) {
+      const record = await pb.collection('posts').create(data)
+      setImage(null)
+      setLink(undefined)
+      setVideo('')
+      if (textRef.current) {
+        textRef.current.value = ''
+      }
+
+      console.log(record)
+    } else {
+      console.log('aquí no envio')
+    }
+
+    //console.log(record)
+  }
+
   return (
     <>
-      <div className="border-2 border-slate-500 border-solid rounded-lg">
+      <form
+        onSubmit={handleSubmit}
+        className="border-2 border-slate-500 border-solid rounded-lg"
+      >
         <div className="flex gap-2 p-3 items-center ">
           <div className="object-cover">
             <Image
@@ -76,8 +107,9 @@ export default function PostInput() {
               height={70}
             />
           </div>
-          <form className="w-full flex gap-2 items-center">
+          <div className="w-full flex gap-2 items-center">
             <textarea
+              ref={textRef}
               className="w-full p-2 rounded-xl bg-slate-500 flex-1 h-14 overflow-auto scrollbar-hide"
               placeholder="what do u think"
             />
@@ -89,29 +121,35 @@ export default function PostInput() {
             >
               <FaShare />
             </button>
-          </form>
+          </div>
         </div>
         <div>
           <div className="flex gap-2 ">
             <button
+              type="button"
               onClick={() => setInputType('image')}
               className="flex flex-1 justify-center rounded-md items-center gap-3 text-xl py-2 px-4  hover:bg-slate-500"
             >
               <FaImage /> Image
             </button>
             <button
+              type="button"
               onClick={() => setInputType('video')}
               className="flex flex-1 justify-center rounded-md items-center gap-3 text-xl py-2 px-4  hover:bg-slate-500"
             >
               <FaVideo /> Video
             </button>
             <button
+              type="button"
               onClick={() => setInputType('link')}
               className="flex flex-1 justify-center  rounded-md items-center gap-3 text-xl py-2 px-4  hover:bg-slate-500"
             >
               <FaLink /> Link
             </button>
-            <button className="flex flex-1 justify-center rounded-md items-center gap-3 text-xl py-2 px-4  text-yellow-500 hover:bg-slate-500">
+            <button
+              type="button"
+              className="flex flex-1 justify-center rounded-md items-center gap-3 text-xl py-2 px-4  text-yellow-500 hover:bg-slate-500"
+            >
               <FaStar /> Star
             </button>
           </div>
@@ -208,7 +246,7 @@ export default function PostInput() {
             </a>
           )}
         </div>
-      </div>
+      </form>
     </>
   )
 }

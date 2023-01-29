@@ -31,10 +31,10 @@ export interface IsignUp {
 }
 
 export interface Ilink {
-  image: string
-  favicon: string
-  description: string
-  siteName: string
+  image?: string
+  favicon?: string
+  description?: string
+  siteName?: string
   title: string
   url: string
 }

@@ -1,24 +1,53 @@
-import React, { Component } from 'react'
-import Image from 'next/image'
+import { cookies } from 'next/headers'
 import SinglePost from './SinglePost'
 
 import PocketBase from 'pocketbase'
-
+import { redirect } from 'next/navigation'
 export const dynamic = 'auto',
   dynamicParams = true,
   revalidate = 0,
   fetchCache = 'auto',
   runtime = 'nodejs'
 
-const getPosts = async () => {
+async function initPocketBase() {
   const pb = new PocketBase('http://127.0.0.1:8090')
+
+  // load the store data from the request cookie string
+  const pbauthData = cookies().get('pb_auth')?.value || ''
+  //console.log(pbauthData)
+
+  await pb.authStore.loadFromCookie(`pb_auth=${pbauthData}`)
+
+  // send back the default 'pb_auth' cookie to the client with the latest store state
+  // pb.authStore.onChange(() => {
+  //   cookies().set('pb_auth', pb.authStore.exportToCookie())
+
+  // })
+
+  try {
+    // get an up-to-date auth store state by verifying and refreshing the loaded auth model (if any)
+    pb.authStore.isValid && (await pb.collection('users').authRefresh())
+  } catch (_) {
+    // clear the auth store on failed refresh
+
+    pb.authStore.clear()
+  }
+
+  return pb
+}
+
+const getPosts = async () => {
+  const pb = await initPocketBase()
+
   const records = await pb
     .collection('posts')
     .getFullList(200, { expand: 'image,owner' })
+
+  if (!records || !records.length) {
+    redirect('/')
+  }
   return records as any[]
 }
-
-//console.log(getPosts())
 
 export default async function Posts() {
   const apiPosts = await getPosts()
