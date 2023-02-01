@@ -3,21 +3,7 @@ import PostContent from './PostContent'
 
 import Coments from './Coments'
 
-interface Iuser {
-  id: string
-  userName: string
-  position: string
-  image: string
-}
-
-interface IsinglePostProps {
-  id: string
-  text: string
-  image: { imgName: string; imgId: string }
-  likes: number[]
-  owner: Iuser | undefined
-  comments: string[]
-}
+import { IsinglePostProps } from '../../../types/types'
 
 export default function SinglePost(post: IsinglePostProps) {
   return (
@@ -28,7 +14,12 @@ export default function SinglePost(post: IsinglePostProps) {
         postOwnerName={post.owner?.userName}
         postOwnerPosition={post.owner?.position}
       />
-      <PostContent postText={post.text} image={post.image} />
+      <PostContent
+        text={post.content.text}
+        image={post.content.image}
+        video={post.content.video}
+        link={post.content.link}
+      />
       <div className="px-2">
         {/* coments */}
 

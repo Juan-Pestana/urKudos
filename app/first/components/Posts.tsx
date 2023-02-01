@@ -60,8 +60,18 @@ export default async function Posts() {
       position: post.expand.owner.department,
       id: post.expand.owner.id,
     },
-    text: post.text,
-    image: { imgName: post.expand.image.image, imgId: post.expand.image.id },
+    content: {
+      text: post.text,
+      image: post.expand.image
+        ? {
+            imgName: post.expand.image.image,
+            imgId: post.expand.image.id,
+          }
+        : undefined,
+      video: post.video,
+      link: post.link,
+    },
+
     likes: [2, 3, 4, 5, 6, 7, 8, 9, 10],
     comments: post.comments,
   }))
@@ -72,8 +82,7 @@ export default async function Posts() {
         <SinglePost
           key={post.id}
           id={post.id}
-          text={post.text}
-          image={post.image}
+          content={post.content}
           likes={post.likes}
           owner={post.user}
           comments={post.comments}

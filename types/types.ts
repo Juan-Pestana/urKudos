@@ -1,8 +1,37 @@
 export interface Iuser {
   id: string
-  name: string
+  userName: string
   position: string
-  avatar: string
+  image: string
+}
+
+export interface IsinglePostProps {
+  id: string
+  content: IpostContentProps
+  likes: number[]
+  owner: Iuser | undefined
+  comments: string[]
+}
+
+export interface IpostContentProps {
+  text?: string
+  image?: { imgName: string; imgId: string }
+  video?: string
+  link?: Ilink
+}
+
+export interface Ilink {
+  image?: string
+  favicon?: string
+  description?: string
+  siteName?: string
+  title: string
+  url: string
+}
+
+export interface Iimage {
+  imgId: string
+  imgName: string
 }
 
 export interface Icomments {
@@ -30,16 +59,4 @@ export interface IsignUp {
   passwordConfirm: string
 }
 
-export interface Ilink {
-  image?: string
-  favicon?: string
-  description?: string
-  siteName?: string
-  title: string
-  url: string
-}
-
-export interface Iimage {
-  imgId: string
-  imgName: string
-}
+export type inputType = 'image' | 'link' | 'video' | ''

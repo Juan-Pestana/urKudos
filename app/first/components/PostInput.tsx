@@ -2,17 +2,12 @@
 import { pb } from '../../../sevices/pocketBase'
 import { useRef, useState } from 'react'
 import Image from 'next/image'
-import {
-  FaImage,
-  FaVideo,
-  FaLink,
-  FaStar,
-  FaFile,
-  FaShare,
-} from 'react-icons/fa'
-import { Ilink, Iimage } from '../../../types/types'
+import InputSelectBtns from './postInput/InputSelectBtns'
 
-type inputType = 'image' | 'link' | 'video' | ''
+import { FaShare } from 'react-icons/fa'
+
+import { Ilink, Iimage, inputType } from '../../../types/types'
+import LinkPreview from './shared/LinkPreview'
 
 export default function PostInput() {
   const [inputType, setInputType] = useState<inputType>('')
@@ -114,9 +109,7 @@ export default function PostInput() {
               placeholder="what do u think"
             />
             <button
-              className={`${
-                !focus ? 'hidden' : 'flex'
-              } items-center justify-center rounded-full bg-blue-500 p-3 w-12 h-12 `}
+              className="flex items-center justify-center rounded-full bg-blue-500 p-3 w-12 h-12"
               type="submit"
             >
               <FaShare />
@@ -124,35 +117,12 @@ export default function PostInput() {
           </div>
         </div>
         <div>
-          <div className="flex gap-2 ">
-            <button
-              type="button"
-              onClick={() => setInputType('image')}
-              className="flex flex-1 justify-center rounded-md items-center gap-3 text-xl py-2 px-4  hover:bg-slate-500"
-            >
-              <FaImage /> Image
-            </button>
-            <button
-              type="button"
-              onClick={() => setInputType('video')}
-              className="flex flex-1 justify-center rounded-md items-center gap-3 text-xl py-2 px-4  hover:bg-slate-500"
-            >
-              <FaVideo /> Video
-            </button>
-            <button
-              type="button"
-              onClick={() => setInputType('link')}
-              className="flex flex-1 justify-center  rounded-md items-center gap-3 text-xl py-2 px-4  hover:bg-slate-500"
-            >
-              <FaLink /> Link
-            </button>
-            <button
-              type="button"
-              className="flex flex-1 justify-center rounded-md items-center gap-3 text-xl py-2 px-4  text-yellow-500 hover:bg-slate-500"
-            >
-              <FaStar /> Star
-            </button>
-          </div>
+          {/* btns */}
+          <InputSelectBtns
+            setInputType={setInputType}
+            image={image}
+            video={video}
+          />
           {inputType === 'image' && (
             <div className="p-2">
               <label>
@@ -160,13 +130,12 @@ export default function PostInput() {
                   onChange={handleImagechange}
                   type="file"
                   className="text-sm text-grey-500 rounded-lg
-            file:mr-5 file:py-2 file:px-6
-            file:border-0
-            file:text-sm file:font-medium
-            file:bg-slate-900 file:text-slate-200
-            hover:file:cursor-pointer hover:file:bg-slate-700
-            hover:file:text-slate-100 bg-slate-500 w-full h-14 file:h-14
-          "
+                  file:mr-5 file:py-2 file:px-6
+                  file:border-0
+                  file:text-sm file:font-medium
+                file:bg-slate-900 file:text-slate-200
+                  hover:file:cursor-pointer hover:file:bg-slate-700
+                hover:file:text-slate-100 bg-slate-500 w-full h-14 file:h-14"
                 />
               </label>
             </div>
@@ -199,7 +168,7 @@ export default function PostInput() {
           )}
         </div>
         {/* previews*/}
-        <div className="p-2">
+        <div>
           {image && (
             <div className="object-cover">
               <Image
@@ -221,29 +190,13 @@ export default function PostInput() {
             </div>
           )}
           {link && (
-            <a href={link.url} target="_blank" rel="noreferrer">
-              <div className="flex gap-2 bg-slate-700">
-                <div
-                  className={
-                    link.image
-                      ? 'object-cover w-1/4 h-full'
-                      : 'w-1/5 flex items-center justify-center bg-slate-600'
-                  }
-                >
-                  <img
-                    src={link.image ? link.image : link.favicon}
-                    alt={link.title}
-                    className={link.image ? 'w-full' : 'w-12'}
-                  />
-                </div>
-                <div className="w-3/4 p-3">
-                  <h1 className="overflow-hidden whitespace-nowrap text-ellipsis mb-4">
-                    {link.title}
-                  </h1>
-                  <p>{link.description}</p>
-                </div>
-              </div>
-            </a>
+            <LinkPreview
+              title={link.title}
+              url={link.url}
+              description={link.description}
+              favicon={link.favicon}
+              image={link.image}
+            />
           )}
         </div>
       </form>
