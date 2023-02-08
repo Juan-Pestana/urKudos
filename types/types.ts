@@ -1,8 +1,8 @@
 export interface Iuser {
   id: string
-  userName: string
+  name: string
   position: string
-  image: string
+  avatar: string
 }
 
 export interface IsinglePostProps {
@@ -37,7 +37,7 @@ export interface Iimage {
 export interface Icomments {
   id: string
   text: string
-  post: number
+  post: string
   expand?: any
   isResponse: boolean
   user?: Iuser

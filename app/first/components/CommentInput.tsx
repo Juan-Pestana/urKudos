@@ -1,9 +1,17 @@
-import React from 'react'
+'use client'
 import Image from 'next/image'
 
-export default function CommentInput() {
+interface IcommentInputProps {
+  postId: string
+  isResponse: boolean
+}
+
+export default function CommentInput({
+  postId,
+  isResponse,
+}: IcommentInputProps) {
   return (
-    <div className="flex gap-2 p-1 items-center border-t-2 border-slate-500 border-solid py-3">
+    <>
       <div className="object-cover">
         <Image
           className="rounded-full"
@@ -20,6 +28,6 @@ export default function CommentInput() {
           placeholder="what do u think"
         />
       </form>
-    </div>
+    </>
   )
 }

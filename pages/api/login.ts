@@ -8,19 +8,21 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === 'POST') {
-    const { email, password } = req.body
+    const { authString } = req.body
 
-    const authData = await pb
-      .collection('users')
-      .authWithPassword(email, password)
-
-    if (authData.token) {
+    if (authString) {
       res.setHeader(
         'Set-Cookie',
-        pb.authStore.exportToCookie({ httpOnly: false })
+        cookie.serialize('pb_auth', authString, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV !== 'development',
+          maxAge: 60 * 60 * 24 * 7, // 1 week
+          sameSite: 'strict',
+          path: '/',
+        })
       )
 
-      res.status(200).json({ user: authData.record })
+      res.status(200).json({ user: 'user loged on server' })
     } else {
       res.status(405).json({ message: 'not allowed' })
     }

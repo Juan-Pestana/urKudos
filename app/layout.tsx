@@ -2,6 +2,8 @@ import './output.css'
 import { Montserrat } from '@next/font/google'
 import Image from 'next/image'
 import Link from 'next/link'
+import StoreInitializer from './StoreInitializer'
+import { useStore } from '../store/store'
 
 const custom_font = Montserrat({
   subsets: ['latin'],
@@ -46,6 +48,7 @@ export default function RootLayout({
             </li>
           </nav>
         </header>
+
         <main>{children}</main>
       </body>
     </html>

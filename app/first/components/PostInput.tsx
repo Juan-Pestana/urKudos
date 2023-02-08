@@ -15,6 +15,11 @@ export default function PostInput() {
   const [image, setImage] = useState<Iimage | null>(null)
   const [video, setVideo] = useState('')
   const textRef = useRef<HTMLTextAreaElement>(null)
+  //????
+
+  const user = pb.authStore.model
+
+  console.log(user)
 
   const handleLinkchange: React.ChangeEventHandler<HTMLInputElement> = async (
     e
@@ -62,7 +67,7 @@ export default function PostInput() {
     e.preventDefault()
 
     const data = {
-      owner: 'ubusoy699ervf7d',
+      owner: pb.authStore.model?.id,
       text: textRef.current ? textRef.current.value : undefined,
       link,
       image: image?.imgId,
@@ -96,7 +101,7 @@ export default function PostInput() {
           <div className="object-cover">
             <Image
               className="rounded-full"
-              src="https://i.pravatar.cc/100"
+              src={`http://127.0.0.1:8090/api/files/_pb_users_auth_/${user?.id}/${user?.avatar}`}
               alt="avatar small"
               width={70}
               height={70}

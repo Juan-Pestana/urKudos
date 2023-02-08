@@ -24,7 +24,7 @@ export default function SinglePost(post: IsinglePostProps) {
         {/* coments */}
 
         {/* @ts-expect-error Server Component */}
-        <Coments postId={post.id} />
+        <Coments comments={post.comments} />
       </div>
     </div>
   )

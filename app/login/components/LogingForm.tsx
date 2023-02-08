@@ -5,33 +5,41 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { Ilogin } from '../../../types/types'
 import { pb } from '../../../sevices/pocketBase'
+import { useStore } from '../../../store/store'
+import StoreInitializer from '../../StoreInitializer'
 
 function LogingForm() {
   const router = useRouter()
   const { handleSubmit, register } = useForm<Ilogin>()
 
+  let user = undefined
+
   const onSubmit = async (data: Ilogin) => {
-    const result = await fetch('/api/login', {
+    user = await pb
+      .collection('users')
+      .authWithPassword(data.email, data.password)
+
+    const serverData = await fetch('/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         // 'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ authString: pb.authStore.exportToCookie() }),
     })
 
-    // const res = await result.json()
-
-    if (result) {
-      console.log(result)
-      //console.log(pb.authStore.model)
+    if (user.record && serverData.ok) {
+      useStore.setState({ user: pb.authStore.model })
       router.push('/first')
     } else {
+      console.log('user', user)
+      console.log('server', serverData)
       alert('Credential is not valid')
     }
   }
 
   const logOut = async () => {
+    pb.authStore.clear()
     const result = await fetch('/api/logout', {
       method: 'POST',
       headers: {
@@ -39,14 +47,14 @@ function LogingForm() {
         // 'Content-Type': 'application/x-www-form-urlencoded',
       },
     })
-
-    console.log(result)
-
-    //console.log(pb.authStore.model?.id)
+    if (result.ok) {
+      console.log('logged out')
+    }
   }
 
   return (
     <main>
+      {user && <StoreInitializer />}
       <form
         className="flex h-screen w-full items-center justify-center"
         onSubmit={handleSubmit(onSubmit)}

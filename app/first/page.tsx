@@ -5,7 +5,13 @@ import Image from 'next/image'
 import Posts from './components/Posts'
 import PostInput from './components/PostInput'
 
+import { useStore } from '../../store/store'
+import StoreInitializer from '../StoreInitializer'
+
 export default async function FirstPage() {
+  const storePosts = useStore.getState().posts
+  const user = useStore.getState().user
+
   return (
     <>
       <Head>
