@@ -4,29 +4,29 @@ import SingleComment from './SingleComment'
 import { Iuser, Icomments } from '../../../types/types'
 import LikesComents from './LikesComents'
 
-const asignResponse = (id: string, comments: Icomments[]) => {
-  let aResp = comments.find((comment: any) => {
-    return comment.id === id
-  })
-  //
-  if (aResp && aResp.expand) {
-    aResp.user = aResp.expand.user
-  }
+const asignResponse = (id: string | Icomments, comments: Icomments[]) => {
+  let found = comments.find((c) => c.id === id)
+  let response: Icomments = {}
+  if (found) {
+    response.user = found.expand.user
+    response.id = found.id
+    response.isResponse = found.isResponse
+    response.post = found.post
+    response.text = found.text
+    response.responses = found.responses
 
-  if (aResp && aResp.responses && aResp.responses.length) {
-    aResp.responses = aResp.responses.map((nResp: string) =>
-      asignResponse(nResp, comments)
-    )
-    //console.log(aResp)
-    return aResp
-  } else {
-    return aResp
+    if (response.responses && response.responses.length) {
+      response.responses = response.responses.map((res) =>
+        asignResponse(res, comments)
+      )
+    }
+
+    return response
   }
 }
 
-export default async function Coments({ comments }: any) {
+export default function Coments({ comments, postId }: any) {
   //const allComments = await getComments(postId)
-  const postId = comments[0]
 
   comments = comments.map((comment: any) => ({
     id: comment.id,
@@ -54,6 +54,7 @@ export default async function Coments({ comments }: any) {
                 key={comment.id}
                 id={comment.id}
                 text={comment.text}
+                expand={comment.expand}
                 isResponse={comment.isResponse}
                 post={comment.post}
                 user={comment.user}
@@ -62,7 +63,7 @@ export default async function Coments({ comments }: any) {
             </div>
           ))}
         <div className="flex gap-2 p-1 items-center border-t-2 border-slate-500 border-solid py-3">
-          {<CommentInput postId={postId} isResponse={false} />}
+          <CommentInput postId={postId} isResponse={false} />
         </div>
       </div>
     </>

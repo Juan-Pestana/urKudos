@@ -1,3 +1,5 @@
+'use client'
+
 import PostUser from './PostUser'
 import PostContent from './PostContent'
 
@@ -10,8 +12,8 @@ export default function SinglePost(post: IsinglePostProps) {
     <div className="border-solid border-2 border-gray-500 rounded-lg my-2">
       <PostUser
         postOwnerId={post.owner?.id}
-        postOwnerImage={post.owner?.image}
-        postOwnerName={post.owner?.userName}
+        postOwnerImage={post.owner?.avatar}
+        postOwnerName={post.owner?.name}
         postOwnerPosition={post.owner?.position}
       />
       <PostContent
@@ -24,7 +26,7 @@ export default function SinglePost(post: IsinglePostProps) {
         {/* coments */}
 
         {/* @ts-expect-error Server Component */}
-        <Coments comments={post.comments} />
+        <Coments comments={post.comments} postId={post.id} />
       </div>
     </div>
   )

@@ -8,6 +8,7 @@ import { FaShare } from 'react-icons/fa'
 
 import { Ilink, Iimage, inputType } from '../../../types/types'
 import LinkPreview from './shared/LinkPreview'
+import { useStore } from '../../../store/store'
 
 export default function PostInput() {
   const [inputType, setInputType] = useState<inputType>('')
@@ -15,11 +16,10 @@ export default function PostInput() {
   const [image, setImage] = useState<Iimage | null>(null)
   const [video, setVideo] = useState('')
   const textRef = useRef<HTMLTextAreaElement>(null)
+  const [addPost] = useStore((state) => [state.addPost])
   //????
 
   const user = pb.authStore.model
-
-  console.log(user)
 
   const handleLinkchange: React.ChangeEventHandler<HTMLInputElement> = async (
     e
@@ -34,7 +34,6 @@ export default function PostInput() {
       const linkData = await data.json()
 
       if (linkData.success) {
-        console.log(linkData)
         const alink: Ilink = linkData.result.siteData
         setLink({
           ...alink,
@@ -67,7 +66,7 @@ export default function PostInput() {
     e.preventDefault()
 
     const data = {
-      owner: pb.authStore.model?.id,
+      owner: user?.id,
       text: textRef.current ? textRef.current.value : undefined,
       link,
       image: image?.imgId,
@@ -83,7 +82,25 @@ export default function PostInput() {
         textRef.current.value = ''
       }
 
-      console.log(record)
+      const newRecord = {
+        id: record.id,
+        content: {
+          text: record.text,
+          image: record.content,
+          video: record.video,
+          link: record.link,
+        },
+        likes: [],
+        owner: {
+          id: pb.authStore.model?.id,
+          name: pb.authStore.model?.name,
+          position: pb.authStore.model?.position,
+          avatar: pb.authStore.model?.avatar.avatar,
+        },
+        comments: [],
+      }
+
+      addPost(newRecord)
     } else {
       console.log('aquí no envio')
     }
@@ -167,6 +184,7 @@ export default function PostInput() {
                   className=" text-grey-500 rounded-lg p-3
              bg-slate-500 w-full h-14 text-lg"
                   placeholder="https://www.youtube.com/watch?..."
+                  value={video}
                 />
               </label>
             </div>

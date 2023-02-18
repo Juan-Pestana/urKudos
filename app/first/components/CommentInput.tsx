@@ -1,31 +1,80 @@
 'use client'
+import { useTransition } from 'react'
+import { useForm } from 'react-hook-form'
 import Image from 'next/image'
+import { pb } from '../../../sevices/pocketBase'
+import { useStore } from '../../../store/store'
+import { Icomments, Iuser } from '../../../types/types'
 
 interface IcommentInputProps {
   postId: string
   isResponse: boolean
 }
 
+interface IuserComment {
+  comment: string
+}
+
 export default function CommentInput({
   postId,
   isResponse,
 }: IcommentInputProps) {
+  const user = pb.authStore.model
+  const [isPending, startTransition] = useTransition()
+
+  const [addComment] = useStore((state) => [state.addComment])
+  const { handleSubmit, register, resetField } = useForm<IuserComment>()
+
+  const onSubmit = async (data: IuserComment) => {
+    const newCommentData = {
+      user: user?.id,
+      text: data.comment,
+      post: postId,
+      isResponse: isResponse,
+    }
+    const newCommentRes = (await pb
+      .collection('comments')
+      .create(newCommentData, { expand: 'user' })) as Icomments
+
+    // Refresh the current route and fetch new data from the server without
+    // losing client-side browser or React state.
+    resetField('comment')
+
+    const newCommentStore: Icomments = {
+      id: newCommentRes.id,
+      text: newCommentRes.text,
+      post: newCommentRes.post,
+      isResponse: newCommentRes.isResponse,
+      user: {
+        id: newCommentRes.expand.user.id,
+        name: newCommentRes.expand.user.name,
+        position: newCommentRes.expand.user.position,
+        avatar: newCommentRes.expand.user.avatar,
+      },
+    }
+    console.log(newCommentRes)
+    addComment(postId, newCommentRes)
+  }
+
   return (
     <>
       <div className="object-cover">
         <Image
           className="rounded-full"
-          src="https://i.pravatar.cc/100"
+          src={`http://127.0.0.1:8090/api/files/_pb_users_auth_/${user?.id}/${user?.avatar}`}
           alt="avatar small"
-          width={70}
-          height={70}
+          width={50}
+          height={50}
         />
       </div>
-      <form className="w-full">
+      <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
         <input
-          className="w-full p-2 rounded-xl bg-slate-500"
+          className={`w-full p-2 rounded-xl bg-slate-500 ${
+            !isPending ? 'opacity-70' : 'opacity-100'
+          }`}
           type="text"
           placeholder="what do u think"
+          {...register('comment')}
         />
       </form>
     </>

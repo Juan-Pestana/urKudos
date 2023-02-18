@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { pb } from '../../sevices/pocketBase'
 
 import cookie from 'cookie'
 

@@ -1,5 +1,5 @@
 export interface Iuser {
-  id: string
+  id?: string
   name: string
   position: string
   avatar: string
@@ -10,7 +10,7 @@ export interface IsinglePostProps {
   content: IpostContentProps
   likes: number[]
   owner: Iuser | undefined
-  comments: string[]
+  comments?: Icomments[]
 }
 
 export interface IpostContentProps {
@@ -40,8 +40,8 @@ export interface Icomments {
   post: string
   expand?: any
   isResponse: boolean
-  user?: Iuser
-  responses: Icomments[] | []
+  user?: string
+  responses?: Icomments[] | []
 }
 
 export interface Ilogin {

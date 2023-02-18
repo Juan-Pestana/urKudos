@@ -24,7 +24,7 @@ export default function RegisterForm() {
     formData.append('avatar', data.avatar[0])
 
     const record = await pb.collection('users').create(formData)
-    console.log(record)
+
     router.push('/login')
   }
   return (

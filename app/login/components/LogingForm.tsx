@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form'
 import { Ilogin } from '../../../types/types'
 import { pb } from '../../../sevices/pocketBase'
 import { useStore } from '../../../store/store'
-import StoreInitializer from '../../StoreInitializer'
 
 function LogingForm() {
   const router = useRouter()
@@ -32,8 +31,6 @@ function LogingForm() {
       useStore.setState({ user: pb.authStore.model })
       router.push('/first')
     } else {
-      console.log('user', user)
-      console.log('server', serverData)
       alert('Credential is not valid')
     }
   }
@@ -54,7 +51,6 @@ function LogingForm() {
 
   return (
     <main>
-      {user && <StoreInitializer />}
       <form
         className="flex h-screen w-full items-center justify-center"
         onSubmit={handleSubmit(onSubmit)}

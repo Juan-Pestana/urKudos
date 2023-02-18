@@ -5,15 +5,18 @@ import { pb } from '../sevices/pocketBase'
 import { useStore } from '../store/store'
 import { IsinglePostProps } from '../types/types'
 
-interface IstorePropos {
-  posts: IsinglePostProps[] | []
-  user: string
+interface IstoreProps {
+  posts: IsinglePostProps[]
 }
 
-export default function StoreInitializer() {
+export default function StoreInitializer({ posts }: any) {
   const initialized = useRef(false)
   if (!initialized.current) {
-    useStore.setState({ posts: [], user: {} })
+    if (posts) {
+      useStore.setState(() => ({ posts }))
+    } else {
+      useStore.setState({ posts: [] })
+    }
 
     //pb.authStore.loadFromCookie(user)
 

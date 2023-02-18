@@ -44,6 +44,7 @@ export default function SingleComment(comment: Icomments) {
               <SingleComment
                 id={response.id}
                 text={response.text}
+                expand={response.expand}
                 isResponse={response.isResponse}
                 user={response.user}
                 post={response.post}
