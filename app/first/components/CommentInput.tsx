@@ -9,6 +9,7 @@ import { Icomments, Iuser } from '../../../types/types'
 interface IcommentInputProps {
   postId: string
   isResponse: boolean
+  setComments: React.Dispatch<React.SetStateAction<[] | Icomments[]>>
 }
 
 interface IuserComment {
@@ -18,6 +19,7 @@ interface IuserComment {
 export default function CommentInput({
   postId,
   isResponse,
+  setComments,
 }: IcommentInputProps) {
   const user = pb.authStore.model
   const [isPending, startTransition] = useTransition()
@@ -40,20 +42,9 @@ export default function CommentInput({
     // losing client-side browser or React state.
     resetField('comment')
 
-    const newCommentStore: Icomments = {
-      id: newCommentRes.id,
-      text: newCommentRes.text,
-      post: newCommentRes.post,
-      isResponse: newCommentRes.isResponse,
-      user: {
-        id: newCommentRes.expand.user.id,
-        name: newCommentRes.expand.user.name,
-        position: newCommentRes.expand.user.position,
-        avatar: newCommentRes.expand.user.avatar,
-      },
-    }
     console.log(newCommentRes)
-    addComment(postId, newCommentRes)
+    setComments((prevComments) => [...prevComments, newCommentRes])
+    //addComment(postId, newCommentRes)
   }
 
   return (

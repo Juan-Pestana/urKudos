@@ -1,5 +1,5 @@
-'use client'
-import React from 'react'
+//ojo aunque no meta la directiva useClient al estar debajo de un client component actua como un componente de cliente
+
 import Image from 'next/image'
 
 type IpostUserProps = {
@@ -15,6 +15,7 @@ export default function PostUser({
   postOwnerName,
   postOwnerPosition,
 }: IpostUserProps) {
+  console.log(postOwnerName)
   return (
     <div className="flex p-2">
       <div className="object-cover">

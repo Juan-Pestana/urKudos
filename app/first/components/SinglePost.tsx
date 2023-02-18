@@ -2,6 +2,7 @@
 
 import PostUser from './PostUser'
 import PostContent from './PostContent'
+import LazyRender from './LazyRender'
 
 import Coments from './Coments'
 
@@ -24,9 +25,9 @@ export default function SinglePost(post: IsinglePostProps) {
       />
       <div className="px-2">
         {/* coments */}
-
-        {/* @ts-expect-error Server Component */}
-        <Coments comments={post.comments} postId={post.id} />
+        <LazyRender>
+          <Coments postId={post.id} />
+        </LazyRender>
       </div>
     </div>
   )

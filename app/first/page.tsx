@@ -70,7 +70,7 @@ const getPosts = async () => {
   } else {
     const posts = await Promise.all(
       records.map(async (post: any) => {
-        const comments = await getComments(post.id)
+        // const comments = await getComments(post.id)
 
         return {
           id: post.id,
@@ -93,7 +93,7 @@ const getPosts = async () => {
           },
 
           likes: [2, 3, 4, 5, 6, 7, 8, 10],
-          comments: comments.items,
+          comments: [],
         }
       })
     )
