@@ -3,8 +3,8 @@
 import Head from 'next/head'
 import PocketBase from 'pocketbase'
 import { cookies } from 'next/headers'
-import Posts from './components/Posts'
-import PostInput from './components/PostInput'
+import Posts from './(components)/Posts'
+import PostInput from './(components)/PostInput'
 import { redirect } from 'next/navigation'
 
 import { useStore } from '../../store/store'
