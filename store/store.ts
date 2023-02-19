@@ -21,24 +21,27 @@ export const useStore = create<{
       })
     ),
 }))
-//@ts-expect-error
-const connection = window.__REDUX_DEVTOOLS_EXTENSION__?.connect({
-  name: 'Posts State',
-})
-connection?.init(useStore.getState())
 
-let isUpdateFromDevtools = false
-connection?.subscribe((evt: any) => {
-  if (evt.type === 'DISPATCH') {
-    const newState = JSON.parse(evt.state)
-    isUpdateFromDevtools = true
-    useStore.setState(newState)
-    isUpdateFromDevtools = false
-  }
-})
+if (window) {
+  //@ts-expect-error
+  const connection = window.__REDUX_DEVTOOLS_EXTENSION__?.connect({
+    name: 'Posts State',
+  })
+  connection?.init(useStore.getState())
 
-useStore.subscribe((newState) => {
-  if (!isUpdateFromDevtools) {
-    connection?.send('State', newState)
-  }
-})
+  let isUpdateFromDevtools = false
+  connection?.subscribe((evt: any) => {
+    if (evt.type === 'DISPATCH') {
+      const newState = JSON.parse(evt.state)
+      isUpdateFromDevtools = true
+      useStore.setState(newState)
+      isUpdateFromDevtools = false
+    }
+  })
+
+  useStore.subscribe((newState) => {
+    if (!isUpdateFromDevtools) {
+      connection?.send('State', newState)
+    }
+  })
+}

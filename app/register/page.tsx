@@ -1,8 +1,6 @@
 import Head from 'next/head'
 import RegisterForm from '../../components/register/(components)/registerForm'
 
-export const dynamic = 'force-dynamic'
-
 export default function Register() {
   return (
     <>
