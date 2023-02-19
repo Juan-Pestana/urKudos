@@ -11,7 +11,7 @@ interface IcommentInputProps {
   postId: string
   isResponse: boolean
   setComments: React.Dispatch<React.SetStateAction<string>>
-  setResponding: React.Dispatch<React.SetStateAction<boolean>>
+  setResponding?: React.Dispatch<React.SetStateAction<boolean>>
   commentId?: string
   commentResps?: string[]
 }
@@ -47,12 +47,17 @@ export default function CommentInput({
       resetField('comment')
 
       if (isResponse && commentId && newCommentRes) {
-        const test = (await pb.collection('comments').update(commentId, {
-          responses: [...commentResps, newCommentRes.id],
-        })) as Icomments
+        let test = []
+        if (commentResps) {
+          test = (await pb.collection('comments').update(commentId, {
+            responses: [...commentResps, newCommentRes.id],
+          })) as any
+        }
 
         setComments(data.comment)
-        setResponding(false)
+
+        //TO DO change this shit
+        if (setResponding) setResponding(false)
       } else {
         setComments(newCommentRes.id)
       }

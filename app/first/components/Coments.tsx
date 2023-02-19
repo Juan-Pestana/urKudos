@@ -8,9 +8,13 @@ import LikesComents from './LikesComents'
 import { useEffect, useState, useMemo } from 'react'
 import { pb } from '../../../sevices/pocketBase'
 
+interface Ifix {
+  items: Icomments[]
+}
+
 const asignResponse = (id: string | Icomments, comments: Icomments[]) => {
   let found = comments.find((c) => c.id === id)
-  let response: Icomments = {}
+  let response: any = {}
   if (found) {
     response.user = found.expand.user
     response.id = found.id
@@ -20,7 +24,7 @@ const asignResponse = (id: string | Icomments, comments: Icomments[]) => {
     response.responses = found.responses
 
     if (response.responses && response.responses.length) {
-      response.responses = response.responses.map((res) =>
+      response.responses = response.responses.map((res: string) =>
         asignResponse(res, comments)
       )
     }
@@ -72,13 +76,14 @@ export default function Coments({ postId }: any) {
   async function getComments(id: string) {
     setLoading(true)
     try {
-      const response = await pb.collection('comments').getList(1, 50, {
+      const response = (await pb.collection('comments').getList(1, 50, {
         filter: `post = "${id}"`,
         expand: 'user',
         $autoCancel: false,
-      })
-      if (response.items) {
-        setComments(response.items)
+      })) as Ifix
+      const { items } = response
+      if (items) {
+        setComments(items)
         setLoading(false)
       } else {
         console.log('Respuesta de red OK pero respuesta de HTTP no OK')
@@ -87,17 +92,6 @@ export default function Coments({ postId }: any) {
       console.log('Hubo un problema con la petición Fetch:' + error)
     }
   }
-
-  // comments = comments.map((comment: any) => ({
-  //   id: comment.id,
-  //   text: comment.text,
-  //   user: comment.expand.user,
-  //   isResponse: comment.isResponse,
-  //   responses:
-  //     comment.responses && comment.responses.length
-  //       ? comment.responses.map((resp: string) => asignResponse(resp, comments))
-  //       : [],
-  // }))
 
   if (loading) {
     return <>Loading....</>
