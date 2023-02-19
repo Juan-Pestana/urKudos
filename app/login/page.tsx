@@ -1,6 +1,8 @@
 import Head from 'next/head'
 import LogingForm from '../../components/loging/(components)/LogingForm'
 
+export const dynamic = 'force-static'
+
 export default function Login() {
   return (
     <>
