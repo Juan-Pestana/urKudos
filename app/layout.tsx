@@ -17,11 +17,11 @@ export default function RootLayout({
   return (
     <html>
       <style jsx={true} global>
-        {`
+        {/* {`
           :root {
             --custom-font: ${custom_font.style.fontFamily};
           }
-        `}
+        `} */}
       </style>
       <head />
       <body className="bg-gray-800 text-gray-200 h-screen">
