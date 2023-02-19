@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
-export const dynamic = 'force-static'
+export const dynamic = 'force-dynamic'
 
 export default function Home() {
   return (
