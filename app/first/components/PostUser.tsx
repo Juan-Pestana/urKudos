@@ -15,7 +15,6 @@ export default function PostUser({
   postOwnerName,
   postOwnerPosition,
 }: IpostUserProps) {
-  console.log(postOwnerName)
   return (
     <div className="flex p-2">
       <div className="object-cover">

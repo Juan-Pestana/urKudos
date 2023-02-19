@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <style jsx global>
+      <style jsx="true" global>
         {`
           :root {
             --custom-font: ${custom_font.style.fontFamily};

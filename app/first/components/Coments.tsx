@@ -5,7 +5,7 @@ import CommentInput from './CommentInput'
 import SingleComment from './SingleComment'
 import { Iuser, Icomments } from '../../../types/types'
 import LikesComents from './LikesComents'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { pb } from '../../../sevices/pocketBase'
 
 const asignResponse = (id: string | Icomments, comments: Icomments[]) => {
@@ -43,32 +43,34 @@ export default function Coments({ postId }: any) {
 
   const [loading, setLoading] = useState<boolean>(true)
   const [comments, setComments] = useState<Icomments[] | []>([])
-  const [ordComments, setOrdComments] = useState<any[]>()
+  //const [ordComments, setOrdComments] = useState<any[]>()
+  const [refetch, setRefetch] = useState<string>('first')
 
   useEffect(() => {
+    console.log('fetching nuevos...')
     getComments(postId)
-  }, [])
+  }, [refetch])
 
-  useEffect(() => {
-    if (comments) {
-      const ord = comments.map((comment: any) => ({
-        id: comment.id,
-        text: comment.text,
-        user: comment.expand.user,
-        isResponse: comment.isResponse,
-        responses:
-          comment.responses && comment.responses.length
-            ? comment.responses.map((resp: string) =>
-                asignResponse(resp, comments)
-              )
-            : [],
-      }))
+  let ordComments = useMemo(() => {
+    const ord = comments.map((comment: any) => ({
+      id: comment.id,
+      text: comment.text,
+      user: comment.expand.user,
+      isResponse: comment.isResponse,
+      post: comment.post,
+      responses:
+        comment.responses && comment.responses.length
+          ? comment.responses.map((resp: string) =>
+              asignResponse(resp, comments)
+            )
+          : [],
+    }))
 
-      setOrdComments(ord)
-    }
+    return ord
   }, [comments])
 
   async function getComments(id: string) {
+    setLoading(true)
     try {
       const response = await pb.collection('comments').getList(1, 50, {
         filter: `post = "${id}"`,
@@ -122,6 +124,7 @@ export default function Coments({ postId }: any) {
                   post={comment.post}
                   user={comment.user}
                   responses={comment.responses}
+                  setRefetch={setRefetch}
                 />
               </div>
             ))}
@@ -129,7 +132,7 @@ export default function Coments({ postId }: any) {
           <CommentInput
             postId={postId}
             isResponse={false}
-            setComments={setComments}
+            setComments={setRefetch}
           />
         </div>
       </div>

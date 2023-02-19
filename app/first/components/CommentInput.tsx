@@ -1,5 +1,6 @@
 'use client'
 import { useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import Image from 'next/image'
 import { pb } from '../../../sevices/pocketBase'
@@ -9,7 +10,10 @@ import { Icomments, Iuser } from '../../../types/types'
 interface IcommentInputProps {
   postId: string
   isResponse: boolean
-  setComments: React.Dispatch<React.SetStateAction<[] | Icomments[]>>
+  setComments: React.Dispatch<React.SetStateAction<string>>
+  setResponding: React.Dispatch<React.SetStateAction<boolean>>
+  commentId?: string
+  commentResps?: string[]
 }
 
 interface IuserComment {
@@ -20,30 +24,40 @@ export default function CommentInput({
   postId,
   isResponse,
   setComments,
+  setResponding,
+  commentId,
+  commentResps,
 }: IcommentInputProps) {
   const user = pb.authStore.model
-  const [isPending, startTransition] = useTransition()
 
-  const [addComment] = useStore((state) => [state.addComment])
   const { handleSubmit, register, resetField } = useForm<IuserComment>()
 
   const onSubmit = async (data: IuserComment) => {
-    const newCommentData = {
-      user: user?.id,
-      text: data.comment,
-      post: postId,
-      isResponse: isResponse,
-    }
-    const newCommentRes = (await pb
-      .collection('comments')
-      .create(newCommentData, { expand: 'user' })) as Icomments
+    try {
+      const newCommentData = {
+        user: user?.id,
+        text: data.comment,
+        post: postId,
+        isResponse: isResponse,
+      }
+      const newCommentRes = (await pb
+        .collection('comments')
+        .create(newCommentData, { expand: 'user' })) as Icomments
 
-    // Refresh the current route and fetch new data from the server without
-    // losing client-side browser or React state.
-    resetField('comment')
+      resetField('comment')
 
-    console.log(newCommentRes)
-    setComments((prevComments) => [...prevComments, newCommentRes])
+      if (isResponse && commentId && newCommentRes) {
+        const test = (await pb.collection('comments').update(commentId, {
+          responses: [...commentResps, newCommentRes.id],
+        })) as Icomments
+
+        setComments(data.comment)
+        setResponding(false)
+      } else {
+        setComments(newCommentRes.id)
+      }
+    } catch (error) {}
+
     //addComment(postId, newCommentRes)
   }
 
@@ -60,11 +74,10 @@ export default function CommentInput({
       </div>
       <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
         <input
-          className={`w-full p-2 rounded-xl bg-slate-500 ${
-            !isPending ? 'opacity-70' : 'opacity-100'
-          }`}
+          className={`w-full p-2 rounded-xl bg-slate-500 text-slate-200 `}
           type="text"
           placeholder="what do u think"
+          autoFocus={isResponse ? true : false}
           {...register('comment')}
         />
       </form>

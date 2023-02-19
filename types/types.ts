@@ -40,7 +40,7 @@ export interface Icomments {
   post: string
   expand?: any
   isResponse: boolean
-  user?: string
+  user?: Iuser
   responses?: Icomments[] | []
 }
 
