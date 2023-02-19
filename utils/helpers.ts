@@ -15,7 +15,7 @@ export function convertJsonToFormData(data: any) {
       // console.log(arKey)
       // console.log('displaying arval')
       // console.log(arVal)
-
+      //@ts-expect-error
       if (this.isFile(arVal[0])) {
         for (let z = 0; z < arVal.length; z++) {
           formData.append(`${arKey}[]`, arVal[z])
@@ -34,6 +34,7 @@ export function convertJsonToFormData(data: any) {
                   // (new Date(fromDate)).toUTCString()
                   formData.append(
                     `${arKey}[${j}][${prop}]`,
+                    //@ts-expect-error
                     new Date(arVal[j][prop])
                   )
                 } else {
@@ -52,6 +53,7 @@ export function convertJsonToFormData(data: any) {
     if (arVal === null) {
       continue
     }
+    //@ts-expect-error
     formData.append(arKey, arVal)
   }
   return formData
