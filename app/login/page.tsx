@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import LogingForm from './(components)/LogingForm'
+import LogingForm from '../../components/loging/(components)/LogingForm'
 
 export default function Login() {
   return (

@@ -3,13 +3,11 @@
 import Head from 'next/head'
 import PocketBase from 'pocketbase'
 import { cookies } from 'next/headers'
-import Posts from './(components)/Posts'
-import PostInput from './(components)/PostInput'
+import Posts from '../../components/first/(components)/Posts'
+import PostInput from '../../components/first/(components)/PostInput'
 import { redirect } from 'next/navigation'
 
-import { useStore } from '../../store/store'
 import StoreInitializer from '../StoreInitializer'
-import { IsinglePostProps } from '../../types/types'
 
 export const dynamic = 'auto',
   dynamicParams = true,

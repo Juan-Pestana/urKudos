@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import RegisterForm from './components/registerForm'
+import RegisterForm from '../../components/register/(components)/registerForm'
 
 export default function Register() {
   return (
