@@ -14,19 +14,21 @@ export const useStore = create<{
   addComment: (id, comment) =>
     set(
       produce((state) => {
-        const index = state.posts.findIndex((p) => p.id === id)
+        const index = state.posts.findIndex(
+          (p: IsinglePostProps) => p.id === id
+        )
         state.posts[index].comments.push(comment)
       })
     ),
 }))
-
+//@ts-expect-error
 const connection = window.__REDUX_DEVTOOLS_EXTENSION__?.connect({
   name: 'Posts State',
 })
 connection?.init(useStore.getState())
 
 let isUpdateFromDevtools = false
-connection?.subscribe((evt) => {
+connection?.subscribe((evt: any) => {
   if (evt.type === 'DISPATCH') {
     const newState = JSON.parse(evt.state)
     isUpdateFromDevtools = true
