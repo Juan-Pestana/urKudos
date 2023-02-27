@@ -1,5 +1,5 @@
 'use client'
-import { useMemo, useState, createRef, useLayoutEffect } from 'react'
+import { useMemo, useState, createRef, useLayoutEffect, useEffect } from 'react'
 
 interface IlazyRenderProps {
   threshold?: number
@@ -17,7 +17,7 @@ export default function LazyRender({
   const ref = useMemo(() => createRef<HTMLDivElement>(), [])
 
   const [isVisible, setIsVisible] = useState(false)
-  useLayoutEffect(() => {
+  useEffect(() => {
     // shouldn't happen but makes TS happy
     if (!ref.current) {
       return

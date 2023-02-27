@@ -37,7 +37,7 @@ export default function PostUser({
           <p className="text-lg">{postOwnerPosition}</p>
         </div>
       </div>
-      <div className="text-4xl">...</div>
+      <div>{/* <div className="triangle"></div> */}</div>
     </div>
   )
 }

@@ -8,6 +8,10 @@ import PostInput from '../../components/first/(components)/PostInput'
 import { redirect } from 'next/navigation'
 
 import StoreInitializer from '../StoreInitializer'
+import { IsinglePostProps, Iuser } from '../../types/types'
+import { Suspense } from 'react'
+import Loading from './loading'
+import { useStore } from '../../store/store'
 
 export const dynamic = 'auto',
   dynamicParams = true,
@@ -23,12 +27,6 @@ async function initPocketBase() {
 
   await pb.authStore.loadFromCookie(pbauthData)
 
-  // send back the default 'pb_auth' cookie to the client with the latest store state
-  // pb.authStore.onChange(() => {
-  //   cookies().set('pb_auth', pb.authStore.exportToCookie())
-
-  // })
-
   try {
     // get an up-to-date auth store state by verifying and refreshing the loaded auth model (if any)
     pb.authStore.isValid && (await pb.collection('users').authRefresh())
@@ -41,23 +39,13 @@ async function initPocketBase() {
   return pb
 }
 
-const getComments = async (id: string) => {
-  const pb = await initPocketBase()
-  const records = await pb.collection('comments').getList(1, 50, {
-    filter: `post = "${id}"`,
-    expand: 'user',
-  })
-  return records as any
-}
-
 const getPosts = async () => {
   const pb = await initPocketBase()
 
-  //console.log(userString)
-
-  const records: any = await pb
-    .collection('posts')
-    .getFullList(200, { expand: 'image,owner', sort: '-created' })
+  const records: any = await pb.collection('posts').getFullList(200, {
+    expand: 'image,owner,comments,comments.user',
+    sort: '-created',
+  })
 
   // const comments = await getComments(records[0].id)
 
@@ -66,47 +54,49 @@ const getPosts = async () => {
   if (!records || !records.length) {
     redirect('/')
   } else {
-    const posts = await Promise.all(
-      records.map(async (post: any) => {
-        // const comments = await getComments(post.id)
+    const posts = records.map((post: any) => {
+      // const comments = await getComments(post.id)
 
-        return {
-          id: post.id,
-          owner: {
-            name: post.expand.owner.name,
-            avatar: post.expand.owner.avatar,
-            position: post.expand.owner.department,
-            id: post.expand.owner.id,
-          },
-          content: {
-            text: post.text,
-            image: post.expand.image
-              ? {
-                  imgName: post.expand.image.image,
-                  imgId: post.expand.image.id,
-                }
-              : undefined,
-            video: post.video,
-            link: post.link,
-          },
+      return {
+        id: post.id,
+        type: post.type,
+        owner: {
+          name: post.expand.owner.name,
+          avatar: post.expand.owner.avatar,
+          position: post.expand.owner.department,
+          id: post.expand.owner.id,
+        },
+        content: {
+          text: post.text,
+          image: post.expand.image
+            ? {
+                imgName: post.expand.image.image,
+                imgId: post.expand.image.id,
+              }
+            : undefined,
+          video: post.video,
+          link: post.link,
+        },
 
-          likes: [2, 3, 4, 5, 6, 7, 8, 10],
-          comments: [],
-        }
-      })
-    )
+        likes: [2, 3, 4, 5, 6, 7, 8, 10],
+        comments: post.expand.comments || [],
+      }
+    })
+
     if (posts) {
-      return posts
+      useStore.setState({ posts })
+      return { posts, user: pb.authStore.model }
     } else {
       return {
         posts: [],
+        user: pb.authStore.model,
       }
     }
   }
 }
 
 export default async function FirstPage() {
-  const posts = await getPosts()
+  const { posts, user } = await getPosts()
 
   return (
     <>
@@ -116,10 +106,12 @@ export default async function FirstPage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <StoreInitializer posts={posts} />
-      <section className="flex flex-col justify-center sm:w-3/4  lg:w-1/2 xl:w-2/6 mx-auto py-3">
-        <PostInput />
 
-        {posts && <Posts />}
+      <section className="flex flex-col justify-center sm:w-3/4  lg:w-1/2 xl:w-2/6 mx-auto py-3 px-2">
+        <PostInput user={user} />
+        <Suspense fallback={<Loading />}>
+          <Posts />
+        </Suspense>
       </section>
     </>
   )

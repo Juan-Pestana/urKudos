@@ -10,7 +10,7 @@ import { Icomments, Iuser } from '../../../types/types'
 interface IcommentInputProps {
   postId: string
   isResponse: boolean
-  setComments: React.Dispatch<React.SetStateAction<string>>
+  addCommentToPost: (id: string) => void
   setResponding?: React.Dispatch<React.SetStateAction<boolean>>
   commentId?: string
   commentResps?: string[]
@@ -23,7 +23,7 @@ interface IuserComment {
 export default function CommentInput({
   postId,
   isResponse,
-  setComments,
+  addCommentToPost,
   setResponding,
   commentId,
   commentResps,
@@ -31,6 +31,8 @@ export default function CommentInput({
   const user = pb.authStore.model
 
   const { handleSubmit, register, resetField } = useForm<IuserComment>()
+
+  const addComment = useStore((state) => state.addComment)
 
   const onSubmit = async (data: IuserComment) => {
     try {
@@ -44,6 +46,8 @@ export default function CommentInput({
         .collection('comments')
         .create(newCommentData, { expand: 'user' })) as Icomments
 
+      await addCommentToPost(newCommentRes.id)
+
       resetField('comment')
 
       if (isResponse && commentId && newCommentRes) {
@@ -54,12 +58,12 @@ export default function CommentInput({
           })) as any
         }
 
-        setComments(data.comment)
+        addComment(postId, newCommentRes, commentId)
 
         //TO DO change this shit
         if (setResponding) setResponding(false)
       } else {
-        setComments(newCommentRes.id)
+        addComment(postId, newCommentRes)
       }
     } catch (error) {}
 

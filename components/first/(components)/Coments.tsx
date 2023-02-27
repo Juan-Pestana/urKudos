@@ -5,8 +5,9 @@ import CommentInput from './CommentInput'
 import SingleComment from './SingleComment'
 import { Iuser, Icomments } from '../../../types/types'
 import LikesComents from './LikesComents'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { pb } from '../../../sevices/pocketBase'
+import { useStore } from '../../../store/store'
 
 interface Ifix {
   items: Icomments[]
@@ -17,6 +18,7 @@ const asignResponse = (id: string | Icomments, comments: Icomments[]) => {
   let response: any = {}
   if (found) {
     response.user = found.expand.user
+    response.created = found.created
     response.id = found.id
     response.isResponse = found.isResponse
     response.post = found.post
@@ -24,84 +26,73 @@ const asignResponse = (id: string | Icomments, comments: Icomments[]) => {
     response.responses = found.responses
 
     if (response.responses && response.responses.length) {
-      response.responses = response.responses.map((res: string) =>
-        asignResponse(res, comments)
-      )
+      response.responses = response.responses
+        .map((res: string) => asignResponse(res, comments))
+        .sort(function (a: Icomments, b: Icomments) {
+          return new Date(b.created).valueOf() - new Date(a.created).valueOf()
+        })
     }
 
     return response
   }
 }
 
-// const getComments = async (id: string) => {
-//   const records = await pb.collection('comments').getList(1, 50, {
-//     filter: `post = "${id}"`,
-//     expand: 'user',
-//     $autoCancel: false,
-//   })
-//   return records
-// }
-
 export default function Coments({ postId }: any) {
   //const allComments = await getComments(postId)
 
-  const [loading, setLoading] = useState<boolean>(true)
-  const [comments, setComments] = useState<Icomments[] | []>([])
-  //const [ordComments, setOrdComments] = useState<any[]>()
-  const [refetch, setRefetch] = useState<string>('first')
+  //const [comments, setComments] = useState<Icomments[] | []>([])
+  const [ordComments, setOrdComments] = useState<any[]>()
+
+  const comments = useStore(
+    (state) => state.posts.find((pt) => pt.id === postId)?.comments
+  )
 
   useEffect(() => {
-    console.log('fetching nuevos...')
-    getComments(postId)
-  }, [refetch])
-
-  let ordComments = useMemo(() => {
-    const ord = comments.map((comment: any) => ({
-      id: comment.id,
-      text: comment.text,
-      user: comment.expand.user,
-      isResponse: comment.isResponse,
-      post: comment.post,
-      responses:
-        comment.responses && comment.responses.length
-          ? comment.responses.map((resp: string) =>
-              asignResponse(resp, comments)
-            )
-          : [],
-    }))
-
-    return ord
+    if (comments) {
+      const ord = comments
+        .map((comment: any) => ({
+          id: comment.id,
+          text: comment.text,
+          created: comment.created,
+          user: comment.expand.user,
+          isResponse: comment.isResponse,
+          post: comment.post,
+          responses:
+            comment.responses && comment.responses.length
+              ? comment.responses
+                  .map((resp: string) => asignResponse(resp, comments))
+                  .sort(function (a: any, b: any) {
+                    return (
+                      new Date(b.created).valueOf() -
+                      new Date(a.created).valueOf()
+                    )
+                  })
+              : [],
+        }))
+        .sort(function (a: any, b: any) {
+          return new Date(b.created).valueOf() - new Date(a.created).valueOf()
+        })
+      setOrdComments(ord)
+    }
   }, [comments])
 
-  async function getComments(id: string) {
-    setLoading(true)
-    try {
-      const response = (await pb.collection('comments').getList(1, 50, {
-        filter: `post = "${id}"`,
-        expand: 'user',
-        $autoCancel: false,
-      })) as Ifix
-      const { items } = response
-      if (items) {
-        setComments(items)
-        setLoading(false)
-      } else {
-        console.log('Respuesta de red OK pero respuesta de HTTP no OK')
-      }
-    } catch (error) {
-      console.log('Hubo un problema con la petición Fetch:' + error)
-    }
-  }
+  const addCommentToPost = async (newCommId: string) => {
+    const prevComments = comments?.map((comm) => comm.id)
 
-  if (loading) {
-    return <>Loading....</>
+    if (prevComments) {
+      await pb
+        .collection('posts')
+        .update(postId, { comments: [...prevComments, newCommId] })
+    } else {
+      await pb.collection('posts').update(postId, { comments: [newCommId] })
+    }
   }
 
   return (
     <>
       <LikesComents
         postLikes={[9, 8, 7, 5, 2, 1, 7]}
-        postCommentsNum={comments && comments.length}
+        postCommentsNum={comments ? comments.length : 0}
       />
       <div className="border-t-2 border-solid border-slate-500 px-1 py-2">
         {ordComments &&
@@ -112,21 +103,22 @@ export default function Coments({ postId }: any) {
                 <SingleComment
                   key={comment.id}
                   id={comment.id}
+                  created={comment.created}
                   text={comment.text}
                   expand={comment.expand}
                   isResponse={comment.isResponse}
                   post={comment.post}
                   user={comment.user}
+                  addCommentToPost={addCommentToPost}
                   responses={comment.responses}
-                  setRefetch={setRefetch}
                 />
               </div>
             ))}
-        <div className="flex gap-2 p-1 items-center border-t-2 border-slate-500 border-solid py-3">
+        <div className="flex gap-2 p-1 items-center border-t-2 border-slate-500 border-solid py-3 mt-3">
           <CommentInput
             postId={postId}
             isResponse={false}
-            setComments={setRefetch}
+            addCommentToPost={addCommentToPost}
           />
         </div>
       </div>

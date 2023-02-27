@@ -7,6 +7,7 @@ export interface Iuser {
 
 export interface IsinglePostProps {
   id: string
+  type: string
   content: IpostContentProps
   likes: number[]
   owner: Iuser | undefined
@@ -38,6 +39,7 @@ export interface Icomments {
   id: string
   text: string
   post: string
+  created: number
   expand?: any
   isResponse: boolean
   user?: Iuser

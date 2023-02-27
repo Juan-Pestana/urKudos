@@ -1,25 +1,31 @@
 'use client'
 import { pb } from '../../../sevices/pocketBase'
-import { useRef, useState } from 'react'
+import { useRef, useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import InputSelectBtns from './postInput/InputSelectBtns'
 
 import { FaShare } from 'react-icons/fa'
 
-import { Ilink, Iimage, inputType } from '../../../types/types'
+import { Ilink, Iimage, inputType, Iuser } from '../../../types/types'
 import LinkPreview from './shared/LinkPreview'
 import { useStore } from '../../../store/store'
 
-export default function PostInput() {
+interface IpostInputProps {
+  user: Iuser
+}
+
+export default function PostInput({ user }: IpostInputProps) {
   const [inputType, setInputType] = useState<inputType>('')
   const [link, setLink] = useState<Ilink>()
   const [image, setImage] = useState<Iimage | null>(null)
   const [video, setVideo] = useState('')
   const textRef = useRef<HTMLTextAreaElement>(null)
-  const [addPost] = useStore((state) => [state.addPost])
-  //????
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
 
-  const user = pb.authStore.model
+  const addPost = useStore((state) => state.addPost)
+  //????
 
   const handleLinkchange: React.ChangeEventHandler<HTMLInputElement> = async (
     e
@@ -35,6 +41,7 @@ export default function PostInput() {
 
       if (linkData.success) {
         const alink: Ilink = linkData.result.siteData
+        console.log(alink)
         setLink({
           ...alink,
         })
@@ -100,6 +107,12 @@ export default function PostInput() {
         comments: [],
       }
 
+      startTransition(() => {
+        // Refresh the current route and fetch new data from the server without
+        // losing client-side browser or React state.
+        router.refresh()
+      })
+      setInputType('')
       addPost(newRecord)
     } else {
       console.log('aquí no envio')
@@ -115,15 +128,18 @@ export default function PostInput() {
         className="border-2 border-slate-500 border-solid rounded-lg"
       >
         <div className="flex gap-2 p-3 items-center ">
-          <div className="object-cover">
-            <Image
-              className="rounded-full"
-              src={`http://127.0.0.1:8090/api/files/_pb_users_auth_/${user?.id}/${user?.avatar}`}
-              alt="avatar small"
-              width={70}
-              height={70}
-            />
-          </div>
+          {user && (
+            <div className="object-cover">
+              <Image
+                className="rounded-full"
+                src={`http://127.0.0.1:8090/api/files/_pb_users_auth_/${user?.id}/${user?.avatar}`}
+                alt="avatar small"
+                width={70}
+                height={70}
+              />
+            </div>
+          )}
+
           <div className="w-full flex gap-2 items-center">
             <textarea
               ref={textRef}

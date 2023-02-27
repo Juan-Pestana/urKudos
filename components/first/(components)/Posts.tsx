@@ -1,10 +1,8 @@
-'use client'
 import SinglePost from './SinglePost'
 import { useStore } from '../../../store/store'
-import Comments from './Coments'
 
 export default function Posts() {
-  const [posts] = useStore((state) => [state.posts])
+  const posts = useStore.getState().posts
 
   return (
     <div>
@@ -12,6 +10,7 @@ export default function Posts() {
         posts.map((post) => (
           <SinglePost
             key={post.id}
+            type={post.type}
             id={post.id}
             content={post.content}
             likes={post.likes}

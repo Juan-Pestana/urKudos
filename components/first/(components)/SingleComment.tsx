@@ -3,11 +3,12 @@
 import Image from 'next/image'
 import { useState } from 'react'
 import { Icomments } from '../../../types/types'
+import { motion, AnimatePresence } from 'framer-motion'
 
 import CommentInput from './CommentInput'
 
 interface IcommentsProps extends Icomments {
-  setRefetch: React.Dispatch<React.SetStateAction<string>>
+  addCommentToPost: (id: string) => void
 }
 
 export default function SingleComment(comment: IcommentsProps) {
@@ -39,7 +40,7 @@ export default function SingleComment(comment: IcommentsProps) {
           <div className="px-3 flex justify-between">
             <span
               onClick={() => setResponding(!responding)}
-              className="text-slate-400"
+              className="text-slate-400 cursor-pointer hover:text-slate-200"
             >
               responder
             </span>
@@ -52,18 +53,23 @@ export default function SingleComment(comment: IcommentsProps) {
         </div>
       </div>
       {responding && (
-        <div
-          className={`flex gap-2 p-1 items-center border-l-2 border-yellow-500 border-solid py-5 ml-16  `}
-        >
-          <CommentInput
-            postId={comment.post}
-            isResponse={true}
-            setComments={comment.setRefetch}
-            commentId={comment.id}
-            commentResps={comment.responses?.map((res) => res.id)}
-            setResponding={setResponding}
-          />
-        </div>
+        <AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={`flex gap-2 p-1 items-center border-l-4 border-yellow-500 border-solid py-5 ml-16 bg-slate-900 px-2 rounded-xl mb-3`}
+          >
+            <CommentInput
+              postId={comment.post}
+              isResponse={true}
+              addCommentToPost={comment.addCommentToPost}
+              commentId={comment.id}
+              commentResps={comment.responses?.map((res) => res.id)}
+              setResponding={setResponding}
+            />
+          </motion.div>
+        </AnimatePresence>
       )}
 
       {comment.responses && comment.responses.length
@@ -72,7 +78,8 @@ export default function SingleComment(comment: IcommentsProps) {
               <SingleComment
                 key={response.id}
                 id={response.id}
-                setRefetch={comment.setRefetch}
+                created={response.created}
+                addCommentToPost={comment.addCommentToPost}
                 text={response.text}
                 expand={response.expand}
                 isResponse={response.isResponse}

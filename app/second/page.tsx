@@ -16,9 +16,8 @@ async function initPocketBase() {
 
   // load the store data from the request cookie string
   const pbauthData = cookies().get('pb_auth')?.value || ''
-  //console.log(pbauthData)
 
-  await pb.authStore.loadFromCookie(`pb_auth=${pbauthData}`)
+  await pb.authStore.loadFromCookie(pbauthData)
 
   // send back the default 'pb_auth' cookie to the client with the latest store state
   // pb.authStore.onChange(() => {
@@ -43,9 +42,11 @@ const getPosts = async () => {
   const pb = await initPocketBase()
   //console.log(cookies().getAll())
 
-  const records = await pb
-    .collection('posts')
-    .getFullList(200, { expand: 'owner' })
+  const records = await pb.collection('posts').getFullList(200, {
+    expand:
+      'owner, comments, comments.responses, comments.user, comments.responses.user',
+  })
+
   return records as any[]
 
   //const headersList = cookies().getAll()

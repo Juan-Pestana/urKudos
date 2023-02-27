@@ -5,3 +5,16 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+.triangle {
+  position: absolute;
+  right: -0.5%;
+  top: -0.5%;
+  height: 0;
+  width: 0;
+  border-top-right-radius: 10px;
+  border-bottom: 40px solid transparent;
+  border-left: 40px solid transparent;
+  /* border-top: 40px solid;
+  border-right: 40px solid; */
+}
