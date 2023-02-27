@@ -31,11 +31,13 @@ export default function SingleComment(comment: IcommentsProps) {
           )}
         </div>
         <div className="flex-1">
-          <div className="bg-slate-500 rounded-2xl p-2">
-            <h5 className="text-base font-bold text-slate-200">
+          <div>
+            <h5 className="mx-2 text-base font-bold text-slate-200">
               {comment.user?.name}
             </h5>
-            <p className="text-slate-200">{comment.text}</p>
+            <div className="bg-slate-500 rounded-2xl p-2">
+              <p className="text-slate-200">{comment.text}</p>
+            </div>
           </div>
           <div className="px-3 flex justify-between">
             <span

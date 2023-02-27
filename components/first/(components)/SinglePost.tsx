@@ -8,7 +8,6 @@ import { IsinglePostProps } from '../../../types/types'
 import PostLabel from './shared/PostLabel'
 
 export default function SinglePost(post: IsinglePostProps) {
-  console.log(post.type)
   return (
     <div
       className={`border-solid ${

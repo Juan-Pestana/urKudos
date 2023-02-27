@@ -22,13 +22,13 @@ export default function PostLabel({ type }: IPostLabel) {
   const postTypes = [
     {
       Icon: FaFilm,
-      name: 'pelis/series',
+      name: 'pelis-series',
       color: 'text-blue-500',
       label: 'border-t-blue-500 border-r-blue-500',
     },
     {
       Icon: IoMdRestaurant,
-      name: 'restaurantes/comida',
+      name: 'restaurantes-comida',
       color: 'text-blue-500',
       label: 'border-t-red-500 border-r-red-500',
     },
@@ -58,7 +58,7 @@ export default function PostLabel({ type }: IPostLabel) {
     },
     {
       Icon: FaMusic,
-      name: 'música',
+      name: 'musica',
       color: 'text-blue-700',
       label: 'border-t-black border-r-black',
     },

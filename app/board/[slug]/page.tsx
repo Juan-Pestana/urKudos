@@ -3,15 +3,15 @@
 import Head from 'next/head'
 import PocketBase from 'pocketbase'
 import { cookies } from 'next/headers'
-import Posts from '../../components/first/(components)/Posts'
-import PostInput from '../../components/first/(components)/PostInput'
+import Posts from '../../../components/first/(components)/Posts'
+import PostInput from '../../../components/first/(components)/PostInput'
 import { redirect } from 'next/navigation'
 
-import StoreInitializer from '../StoreInitializer'
-import { IsinglePostProps, Iuser } from '../../types/types'
+import StoreInitializer from '../../StoreInitializer'
+import { IsinglePostProps, Iuser } from '../../../types/types'
 import { Suspense } from 'react'
-import Loading from './loading'
-import { useStore } from '../../store/store'
+import Loading from '../loading'
+import { useStore } from '../../../store/store'
 
 export const dynamic = 'auto',
   dynamicParams = true,
@@ -39,18 +39,28 @@ async function initPocketBase() {
   return pb
 }
 
-const getPosts = async () => {
+const getPosts = async (params: { slug: string }) => {
   const pb = await initPocketBase()
+
+  let { slug } = params
+
+  const types = [
+    'pelis-series',
+    'musica',
+    'restaurantes-comida',
+    'lugares',
+    'planes',
+    'noticias',
+    'star',
+  ]
 
   const records: any = await pb.collection('posts').getFullList(200, {
     expand: 'image,owner,comments,comments.user',
     sort: '-created',
+    filter: types.includes(slug) ? `type = "${slug}"` : '',
   })
 
-  // const comments = await getComments(records[0].id)
-
-  // console.log(comments)
-
+  //CUIDADO CON ESTO
   if (!records || !records.length) {
     redirect('/')
   } else {
@@ -95,8 +105,12 @@ const getPosts = async () => {
   }
 }
 
-export default async function FirstPage() {
-  const { posts, user } = await getPosts()
+export default async function FirstPage({
+  params,
+}: {
+  params: { slug: string }
+}) {
+  const { posts, user } = await getPosts(params)
 
   return (
     <>

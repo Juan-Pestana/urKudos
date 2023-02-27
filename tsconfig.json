@@ -25,7 +25,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/first/data.js"
+    "app/board/data.js"
   ],
   "exclude": ["node_modules"]
 }
