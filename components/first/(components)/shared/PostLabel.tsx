@@ -13,7 +13,7 @@ import {
 import { IoMdRestaurant } from 'react-icons/io'
 
 interface IPostLabel {
-  type: string
+  type?: string
 }
 
 export default function PostLabel({ type }: IPostLabel) {

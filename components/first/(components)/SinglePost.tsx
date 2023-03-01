@@ -6,6 +6,7 @@ import Coments from './Coments'
 
 import { IsinglePostProps } from '../../../types/types'
 import PostLabel from './shared/PostLabel'
+import LikesComents from './LikesComents'
 
 export default function SinglePost(post: IsinglePostProps) {
   return (
@@ -31,6 +32,7 @@ export default function SinglePost(post: IsinglePostProps) {
       />
       <div className="px-2">
         {/* coments */}
+        <LikesComents postLikes={[9, 8, 7, 5, 2, 1, 7]} postId={post.id} />
         <LazyRender>
           <Coments postId={post.id} />
         </LazyRender>

@@ -7,7 +7,7 @@ export interface Iuser {
 
 export interface IsinglePostProps {
   id: string
-  type: string
+  type?: string
   content: IpostContentProps
   likes: number[]
   owner: Iuser | undefined

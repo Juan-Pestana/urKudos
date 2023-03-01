@@ -17,7 +17,7 @@ export default function SingleComment(comment: IcommentsProps) {
     // if is response comment add ml-16
 
     <>
-      <div className="flex gap-2 p-1 mb-2">
+      <div className="flex gap-2 p-1 mb-2 items-center">
         <div className="object-cover ">
           {comment.user?.avatar && (
             <Image
@@ -78,7 +78,7 @@ export default function SingleComment(comment: IcommentsProps) {
         ? comment.responses.map((response: Icomments) => (
             <div key={response.id} className="ml-10">
               <SingleComment
-                key={response.id}
+                key={response.text}
                 id={response.id}
                 created={response.created}
                 addCommentToPost={comment.addCommentToPost}

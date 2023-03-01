@@ -50,6 +50,7 @@ export default function Coments({ postId }: any) {
   useEffect(() => {
     if (comments) {
       const ord = comments
+        .filter((c) => !c.isResponse)
         .map((comment: any) => ({
           id: comment.id,
           text: comment.text,
@@ -90,10 +91,10 @@ export default function Coments({ postId }: any) {
 
   return (
     <>
-      <LikesComents
+      {/* <LikesComents
         postLikes={[9, 8, 7, 5, 2, 1, 7]}
         postCommentsNum={comments ? comments.length : 0}
-      />
+      /> */}
       <div className="border-t-2 border-solid border-slate-500 px-1 py-2">
         {ordComments &&
           ordComments
@@ -114,7 +115,7 @@ export default function Coments({ postId }: any) {
                 />
               </div>
             ))}
-        <div className="flex gap-2 p-1 items-center border-t-2 border-slate-500 border-solid py-3 mt-3">
+        <div className="flex gap-2 items-center border-t-2 border-slate-500 border-solid py-3 mt-3">
           <CommentInput
             postId={postId}
             isResponse={false}

@@ -1,7 +1,12 @@
 'use client'
 import { pb } from '../../../sevices/pocketBase'
 import { useRef, useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
+import {
+  usePathname,
+  useRouter,
+  useSelectedLayoutSegment,
+  useSelectedLayoutSegments,
+} from 'next/navigation'
 import Image from 'next/image'
 import InputSelectBtns from './postInput/InputSelectBtns'
 
@@ -23,6 +28,27 @@ export default function PostInput({ user }: IpostInputProps) {
   const textRef = useRef<HTMLTextAreaElement>(null)
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
+  const path = usePathname()?.split('/').at(-1)
+
+  const pbUser = pb.authStore.model
+
+  console.log('esto es null????', pbUser)
+
+  const types = [
+    'pelis-series',
+    'musica',
+    'restaurantes-comida',
+    'lugares',
+    'planes',
+    'noticias',
+    'star',
+  ]
+
+  var type: undefined | string = undefined
+
+  if (path && types.includes(path)) {
+    type = path
+  }
 
   const addPost = useStore((state) => state.addPost)
   //????
@@ -41,7 +67,7 @@ export default function PostInput({ user }: IpostInputProps) {
 
       if (linkData.success) {
         const alink: Ilink = linkData.result.siteData
-        console.log(alink)
+
         setLink({
           ...alink,
         })
@@ -59,8 +85,6 @@ export default function PostInput({ user }: IpostInputProps) {
   const handleImagechange: React.ChangeEventHandler<HTMLInputElement> = async (
     e
   ) => {
-    //console.log(e.target.value)
-
     if (e.target.files) {
       const formData = new FormData()
       formData.append('image', e.target.files[0])
@@ -73,11 +97,12 @@ export default function PostInput({ user }: IpostInputProps) {
     e.preventDefault()
 
     const data = {
-      owner: user?.id,
+      owner: pbUser?.id,
       text: textRef.current ? textRef.current.value : undefined,
       link,
       image: image?.imgId,
       video,
+      type,
     }
 
     if (data.text || data.link || data.image || data.video) {
@@ -91,6 +116,7 @@ export default function PostInput({ user }: IpostInputProps) {
 
       const newRecord = {
         id: record.id,
+        type: type,
         content: {
           text: record.text,
           image: record.content,
@@ -113,12 +139,11 @@ export default function PostInput({ user }: IpostInputProps) {
         router.refresh()
       })
       setInputType('')
+
       addPost(newRecord)
     } else {
       console.log('aquí no envio')
     }
-
-    //console.log(record)
   }
 
   return (
@@ -132,7 +157,7 @@ export default function PostInput({ user }: IpostInputProps) {
             <div className="object-cover">
               <Image
                 className="rounded-full"
-                src={`http://127.0.0.1:8090/api/files/_pb_users_auth_/${user?.id}/${user?.avatar}`}
+                src={`http://127.0.0.1:8090/api/files/_pb_users_auth_/${user.id}/${user.avatar}`}
                 alt="avatar small"
                 width={70}
                 height={70}

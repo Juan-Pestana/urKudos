@@ -1,13 +1,18 @@
+'use client'
+
+import { useStore } from '../../../store/store'
+
 type LikesComentsProps = {
   postLikes: number[]
-  postCommentsNum: number
+  postId: string
 }
 
-export default function LikesComents({
-  postLikes,
-  postCommentsNum,
-}: LikesComentsProps) {
+export default function LikesComents({ postLikes, postId }: LikesComentsProps) {
   //console.log(postCommentsNum)
+
+  const comments = useStore(
+    (state) => state.posts.find((pt) => pt.id === postId)?.comments
+  )
 
   return (
     <>
@@ -16,7 +21,7 @@ export default function LikesComents({
           <span>{postLikes.length}</span> Likes
         </div>
         <div className="flex-1 text-right text-slate-400">
-          <span>{postCommentsNum}</span> Comentarios
+          <span>{comments?.length}</span> Comentarios
         </div>
       </div>
       {/* Coments & Like buttons */}
