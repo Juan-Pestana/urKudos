@@ -14,7 +14,7 @@ export default function InputSelectBtns({
   video,
 }: IinputSelectBtns) {
   return (
-    <div className="pb-2 px-2 flex gap-2 ">
+    <div className="pb-2 px-2 flex flex-wrap gap-2 ">
       <button
         type="button"
         disabled={video ? true : false}

@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import { FaReply } from 'react-icons/fa'
 import { useState } from 'react'
 import { Icomments } from '../../../types/types'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -35,17 +36,17 @@ export default function SingleComment(comment: IcommentsProps) {
             <h5 className="mx-2 text-base font-bold text-slate-200">
               {comment.user?.name}
             </h5>
-            <div className="bg-slate-500 rounded-2xl p-2">
+            <div className="bg-slate-500 rounded-2xl p-2 flex items-center">
               <p className="text-slate-200">{comment.text}</p>
+              <div
+                className="ml-auto px-2 cursor-pointer text-slate-400"
+                onClick={() => setResponding(!responding)}
+              >
+                <FaReply />
+              </div>
             </div>
           </div>
           <div className="px-3 flex justify-between">
-            <span
-              onClick={() => setResponding(!responding)}
-              className="text-slate-400 cursor-pointer hover:text-slate-200"
-            >
-              responder
-            </span>
             {comment.responses && comment.responses.length ? (
               <span className="text-slate-400">
                 {comment.responses.length} respuestas

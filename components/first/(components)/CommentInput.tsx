@@ -1,8 +1,10 @@
 'use client'
-import { useTransition } from 'react'
-import { useRouter } from 'next/navigation'
+
 import { useForm } from 'react-hook-form'
+import { useState } from 'react'
 import Image from 'next/image'
+import Picker from '@emoji-mart/react'
+import { FaRegSmile } from 'react-icons/fa'
 import { pb } from '../../../sevices/pocketBase'
 import { useStore } from '../../../store/store'
 import { Icomments, Iuser } from '../../../types/types'
@@ -30,8 +32,10 @@ export default function CommentInput({
 }: IcommentInputProps) {
   const user = pb.authStore.model
 
-  const { handleSubmit, register, resetField } = useForm<IuserComment>()
-
+  const { handleSubmit, register, resetField, getValues, setValue } =
+    useForm<IuserComment>()
+  const [emojiData, setEmojiData] = useState<any>(null)
+  const [showEmoji, setShowEmoji] = useState<boolean>(false)
   const addComment = useStore((state) => state.addComment)
 
   const onSubmit = async (data: IuserComment) => {
@@ -70,6 +74,15 @@ export default function CommentInput({
     //addComment(postId, newCommentRes)
   }
 
+  const addEmoji = (e: any) => {
+    const sym = e.unified.split('_')
+    const codeArray: any[] = []
+    sym.forEach((el: any) => codeArray.push('0x' + el))
+    let emoji = String.fromCodePoint(...codeArray)
+    const singleValue = getValues('comment')
+    setValue('comment', singleValue + emoji)
+  }
+
   return (
     <>
       <div className="object-cover">
@@ -82,13 +95,40 @@ export default function CommentInput({
         />
       </div>
       <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
-        <input
-          className={`w-full p-2 rounded-xl bg-slate-500 text-slate-200 `}
-          type="text"
-          placeholder="what do u think"
-          autoFocus={isResponse ? true : false}
-          {...register('comment')}
-        />
+        <div className="relative flex items-center  w-full rounded-xl bg-slate-500 ">
+          <input
+            className="w-full p-2 text-slate-200 rounded-xl bg-slate-500 outline-none"
+            type="text"
+            placeholder="what do u think"
+            autoFocus={isResponse ? true : false}
+            {...register('comment')}
+          />
+          <span
+            className="p-2 text-lg cursor-pointer hover:text-xl"
+            onClick={async () => {
+              const emojys = (await import('@emoji-mart/data')).default
+              setEmojiData(emojys)
+              setShowEmoji(!showEmoji)
+            }}
+          >
+            <FaRegSmile />
+          </span>
+          {showEmoji && (
+            <div className="absolute top-[100%] right-2 z-10">
+              <Picker
+                data={emojiData}
+                emojiSize={20}
+                theme={'dark'}
+                emojiButtonSize={32}
+                onEmojiSelect={addEmoji}
+                maxFrequentRows={1}
+                onClickOutside={() => {
+                  setShowEmoji(false)
+                }}
+              />
+            </div>
+          )}
+        </div>
       </form>
     </>
   )

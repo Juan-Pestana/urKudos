@@ -29,7 +29,7 @@ function LogingForm() {
 
     if (user.record && serverData.ok) {
       useStore.setState({ user: pb.authStore.model })
-      router.push('/first')
+      router.push('/board/main')
     } else {
       alert('Credential is not valid')
     }
@@ -52,33 +52,34 @@ function LogingForm() {
   return (
     <main>
       <form
-        className="flex h-screen w-full items-center justify-center"
+        className="flex my-40 w-full items-center justify-center"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="bg-base-100 w-96 p-10 shadow-xl">
+        <div className="bg-slate-900 m-2 p-10 shadow-x  lg:w-1/3 xl:w-1/4  ">
           <div className="py-5">
             <h2 className="text-center text-2xl">Welcome back!</h2>
             <input
               type="email"
               placeholder="Type your email..."
-              className="my-4 w-full max-w-xs border-2 border-slate-600 bg-slate-500 p-3"
+              className="my-4 w-full  border-2 border-slate-600 bg-slate-500 p-3"
               {...register('email')}
             />
             <input
               type="password"
               placeholder="Type your password..."
-              className="my-4 w-full max-w-xs border-2 border-slate-600 bg-slate-500 p-3"
+              className="my-4 w-full  border-2 border-slate-600 bg-slate-500 p-3"
               {...register('password')}
             />
             <div className="items-center justify-between">
               <button
-                className="my-4 w-full max-w-xs border-2 border-slate-600 bg-slate-700 p-3 text-white"
+                className="my-4 w-full border-2 border-slate-600 bg-slate-700 p-3 text-white hover:bg-slate-600 "
                 type="submit"
               >
                 Login
               </button>
             </div>
-            <Link href="/register" className="link">
+            Not a User?
+            <Link href="/register" className="text-blue-700 mx-3">
               Go to sign up
             </Link>
           </div>

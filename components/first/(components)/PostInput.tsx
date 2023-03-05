@@ -1,16 +1,13 @@
 'use client'
 import { pb } from '../../../sevices/pocketBase'
 import { useRef, useState, useTransition } from 'react'
-import {
-  usePathname,
-  useRouter,
-  useSelectedLayoutSegment,
-  useSelectedLayoutSegments,
-} from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import Image from 'next/image'
+
+import Picker from '@emoji-mart/react'
 import InputSelectBtns from './postInput/InputSelectBtns'
 
-import { FaShare } from 'react-icons/fa'
+import { FaRegSmile, FaShare } from 'react-icons/fa'
 
 import { Ilink, Iimage, inputType, Iuser } from '../../../types/types'
 import LinkPreview from './shared/LinkPreview'
@@ -25,14 +22,15 @@ export default function PostInput({ user }: IpostInputProps) {
   const [link, setLink] = useState<Ilink>()
   const [image, setImage] = useState<Iimage | null>(null)
   const [video, setVideo] = useState('')
+  const [emojiData, setEmojiData] = useState<any>(null)
+  const [showEmoji, setShowEmoji] = useState<boolean>(false)
   const textRef = useRef<HTMLTextAreaElement>(null)
   const router = useRouter()
+
   const [isPending, startTransition] = useTransition()
   const path = usePathname()?.split('/').at(-1)
 
   const pbUser = pb.authStore.model
-
-  console.log('esto es null????', pbUser)
 
   const types = [
     'pelis-series',
@@ -146,6 +144,20 @@ export default function PostInput({ user }: IpostInputProps) {
     }
   }
 
+  if (type === 'noticias' || type === 'star') {
+    return null
+  }
+
+  const addEmoji = (e: any) => {
+    const sym = e.unified.split('_')
+    const codeArray: any[] = []
+    sym.forEach((el: any) => codeArray.push('0x' + el))
+    let emoji = String.fromCodePoint(...codeArray)
+    textRef.current
+      ? (textRef.current.value = textRef.current.value + emoji)
+      : null
+  }
+
   return (
     <>
       <form
@@ -165,18 +177,47 @@ export default function PostInput({ user }: IpostInputProps) {
             </div>
           )}
 
-          <div className="w-full flex gap-2 items-center">
-            <textarea
-              ref={textRef}
-              className="w-full p-2 rounded-xl bg-slate-500 flex-1 h-14 overflow-auto scrollbar-hide"
-              placeholder="what do u think"
-            />
+          <div className="w-full flex gap-2 items-center relative">
+            <div className="flex items-center rounded-xl bg-slate-500 flex-1">
+              <textarea
+                ref={textRef}
+                className="rounded-xl bg-slate-500 p-2 flex-1 h-14 overflow-auto scrollbar-hide outline-none"
+                placeholder="what do u think"
+              />
+
+              <span
+                className="p-2 text-lg cursor-pointer hover:text-xl"
+                onClick={async () => {
+                  const emojys = (await import('@emoji-mart/data')).default
+                  setEmojiData(emojys)
+                  setShowEmoji(!showEmoji)
+                }}
+              >
+                <FaRegSmile />
+              </span>
+            </div>
+
             <button
               className="flex items-center justify-center rounded-full bg-blue-500 p-3 w-12 h-12"
               type="submit"
             >
               <FaShare />
             </button>
+            {showEmoji && (
+              <div className="absolute top-[100%] right-2 z-10">
+                <Picker
+                  data={emojiData}
+                  emojiSize={20}
+                  theme={'dark'}
+                  emojiButtonSize={32}
+                  onEmojiSelect={addEmoji}
+                  maxFrequentRows={1}
+                  onClickOutside={() => {
+                    setShowEmoji(false)
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
         <div>

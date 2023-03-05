@@ -15,8 +15,8 @@ import { useState } from 'react'
 
 export default function AsideLinks() {
   return (
-    <aside className="relative hidden lg:block">
-      <div className="fixed my-3 mx-3 border-2 border-slate-500 p-3 rounded-lg w-56 xl:mx-8">
+    <aside className="relative w-64 hidden lg:block ml-3 xl:ml-8">
+      <div className="fixed my-3 mx-3 border-2 border-slate-500 p-3 rounded-lg w-64">
         <div className="p-1">
           <Link
             href="/board/main"

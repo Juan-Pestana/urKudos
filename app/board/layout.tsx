@@ -6,10 +6,16 @@ export default function BoardLayout({
   children: React.ReactNode
 }) {
   return (
-    <section>
+    <section className="flex justify-between w-full">
       {/* Include shared UI here e.g. a header or sidebar */}
       <AsideLinks />
-      <main>{children}</main>
+      <main className="flex-1">{children}</main>
+
+      <div className="relative w-64 hidden lg:block mr-3 xl:mr-8">
+        <div className="fixed my-3 border-2 border-slate-500 p-3 rounded-lg w-64">
+          <h1>hola</h1>
+        </div>
+      </div>
     </section>
   )
 }
