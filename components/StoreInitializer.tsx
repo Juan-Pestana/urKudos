@@ -14,7 +14,7 @@ export default function StoreInitializer({ posts, user }: IstoreProps) {
   const initialized = useRef(false)
 
   if (!initialized.current) {
-    if (posts && user) {
+    if (posts) {
       useStore.setState(() => ({ posts }))
       useStore.setState(() => ({ user }))
     } else {

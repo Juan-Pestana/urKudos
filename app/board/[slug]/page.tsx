@@ -1,119 +1,113 @@
 //import {useState} from 'react'
 
 import Head from 'next/head'
-import PocketBase from 'pocketbase'
-import { cookies } from 'next/headers'
+
 import Posts from '../../../components/first/Posts'
 import PostInput from '../../../components/first/PostInput'
-import { redirect } from 'next/navigation'
 
-import StoreInitializer from '../../StoreInitializer'
 import { IsinglePostProps, Iuser } from '../../../types/types'
 import { Suspense } from 'react'
 import Loading from '../loading'
-import { useStore } from '../../../store/store'
 
-export const dynamic = 'auto',
-  dynamicParams = true,
-  revalidate = 0,
-  fetchCache = 'auto',
-  runtime = 'nodejs'
+// export const dynamic = 'auto',
+//   dynamicParams = true,
+//   revalidate = 0,
+//   fetchCache = 'auto',
+//   runtime = 'nodejs'
 
-async function initPocketBase() {
-  const pb = new PocketBase('http://127.0.0.1:8090')
+// async function initPocketBase() {
+//   const pb = new PocketBase('http://127.0.0.1:8090')
 
-  // load the store data from the request cookie string
-  const pbauthData = cookies().get('pb_auth')?.value || ''
+//   // load the store data from the request cookie string
+//   const pbauthData = cookies().get('pb_auth')?.value || ''
 
-  await pb.authStore.loadFromCookie(pbauthData)
+//   await pb.authStore.loadFromCookie(pbauthData)
 
-  try {
-    // get an up-to-date auth store state by verifying and refreshing the loaded auth model (if any)
-    pb.authStore.isValid && (await pb.collection('users').authRefresh())
-  } catch (_) {
-    // clear the auth store on failed refresh
+//   try {
+//     // get an up-to-date auth store state by verifying and refreshing the loaded auth model (if any)
+//     pb.authStore.isValid && (await pb.collection('users').authRefresh())
+//   } catch (_) {
+//     // clear the auth store on failed refresh
 
-    pb.authStore.clear()
-  }
+//     pb.authStore.clear()
+//   }
 
-  return pb
-}
+//   return pb
+// }
 
-const getPosts = async (params: { slug: string }) => {
-  const pb = await initPocketBase()
+// const getPosts = async (params: { slug: string }) => {
+//   const pb = await initPocketBase()
 
-  let { slug } = params
+//   let { slug } = params
 
-  const types = [
-    'pelis-series',
-    'musica',
-    'restaurantes-comida',
-    'lugares',
-    'planes',
-    'noticias',
-    'star',
-  ]
+//   const types = [
+//     'pelis-series',
+//     'musica',
+//     'restaurantes-comida',
+//     'lugares',
+//     'planes',
+//     'noticias',
+//     'star',
+//   ]
 
-  const records: any = await pb.collection('posts').getFullList(200, {
-    expand: 'image,owner,comments,comments.user',
-    sort: '-created',
-    filter: types.includes(slug) ? `type = "${slug}"` : '',
-  })
+//   const records: any = await pb.collection('posts').getFullList(200, {
+//     expand: 'image,owner,comments,comments.user',
+//     sort: '-created',
+//     filter: types.includes(slug) ? `type = "${slug}"` : '',
+//   })
 
-  const user = pb.authStore.model
+//   const user = pb.authStore.model
 
-  //CUIDADO CON ESTO
-  if (!records || !records.length) {
-    redirect('/')
-  } else {
-    const posts = records.map((post: any) => {
-      // const comments = await getComments(post.id)
+//   //CUIDADO CON ESTO
+//   if (!records || !records.length) {
+//     redirect('/')
+//   } else {
+//     const posts = records.map((post: any) => {
+//       // const comments = await getComments(post.id)
 
-      return {
-        id: post.id,
-        type: post.type,
-        owner: {
-          name: post.expand.owner.name,
-          avatar: post.expand.owner.avatar,
-          position: post.expand.owner.department,
-          id: post.expand.owner.id,
-        },
-        content: {
-          text: post.text,
-          image: post.expand.image
-            ? {
-                imgName: post.expand.image.image,
-                imgId: post.expand.image.id,
-              }
-            : undefined,
-          video: post.video,
-          link: post.link,
-        },
+//       return {
+//         id: post.id,
+//         type: post.type,
+//         owner: {
+//           name: post.expand.owner.name,
+//           avatar: post.expand.owner.avatar,
+//           position: post.expand.owner.department,
+//           id: post.expand.owner.id,
+//         },
+//         content: {
+//           text: post.text,
+//           image: post.expand.image
+//             ? {
+//                 imgName: post.expand.image.image,
+//                 imgId: post.expand.image.id,
+//               }
+//             : undefined,
+//           video: post.video,
+//           link: post.link,
+//         },
 
-        likes: [2, 3, 4, 5, 6, 7, 8, 10],
-        comments: post.expand.comments || [],
-      }
-    })
+//         likes: [2, 3, 4, 5, 6, 7, 8, 10],
+//         comments: post.expand.comments || [],
+//       }
+//     })
 
-    if (posts) {
-      useStore.setState({ posts })
-      return { posts, user: pb.authStore.model }
-    } else {
-      return {
-        posts: [],
-        user: pb.authStore.model,
-      }
-    }
-  }
-}
+//     if (posts) {
+//       useStore.setState({ posts })
+//       return { posts, user: pb.authStore.model }
+//     } else {
+//       return {
+//         posts: [],
+//         user: pb.authStore.model,
+//       }
+//     }
+//   }
+// }
 
 export default async function FirstPage({
   params,
 }: {
   params: { slug: string }
 }) {
-  const { posts, user } = await getPosts(params)
-
   return (
     <>
       <Head>
@@ -121,13 +115,13 @@ export default async function FirstPage({
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <StoreInitializer posts={posts} />
 
       <section className="flex-1">
         <div className="flex flex-col justify-center sm:w-3/4  lg:w-4/5 xl:w-3/5 mx-auto py-3 px-2">
           <PostInput />
           <Suspense fallback={<Loading />}>
-            <Posts />
+            {/* @ts-expect-error Async Server Component */}
+            <Posts params={params} />
           </Suspense>
         </div>
       </section>

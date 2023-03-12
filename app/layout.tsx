@@ -1,5 +1,5 @@
 import './output.css'
-import { Montserrat, Roboto, Inter } from '@next/font/google'
+import { Montserrat, Roboto, Inter } from 'next/font/google'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -18,13 +18,6 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      {/* <style jsx global>
-        {`
-          :root {
-            --custom-font: ${custom_font.style.fontFamily};
-          }
-        `}
-      </style> */}
       <head />
       <body
         className={`bg-gray-800 text-gray-200 h-screen  ${montserrat.variable} font-sans`}
