@@ -28,7 +28,7 @@ async function initPocketBase() {
   return pb
 }
 
-const getPosts = async (params: { slug: string }) => {
+const getPosts = async (params: { slug: string }, page?: string) => {
   const pb = await initPocketBase()
 
   let { slug } = params
@@ -43,13 +43,19 @@ const getPosts = async (params: { slug: string }) => {
     'star',
   ]
 
-  const records: any = await pb.collection('posts').getFullList(200, {
+  const intPage = page ? parseInt(page) : 1
+
+  const response: any = await pb.collection('posts').getList(intPage, 5, {
     expand: 'image,owner,comments,comments.user',
     sort: '-created',
     filter: types.includes(slug) ? `type = "${slug}"` : '',
   })
 
-  const user = pb.authStore.model
+  //console.log(response)
+
+  const records = response.items
+
+  const oldPosts = useStore.getState().posts
 
   //CUIDADO CON ESTO
   if (!records || !records.length) {
@@ -85,6 +91,7 @@ const getPosts = async (params: { slug: string }) => {
     })
 
     if (posts) {
+      useStore.setState({ posts: [...posts] })
       return { posts, user: pb.authStore.model }
     } else {
       return {
@@ -95,15 +102,30 @@ const getPosts = async (params: { slug: string }) => {
   }
 }
 
-export default async function Posts({ params }: { params: { slug: string } }) {
+export default async function Posts({
+  params,
+  searchParams,
+}: {
+  params: { slug: string }
+  searchParams?: { [key: string]: string | undefined }
+}) {
   //const posts = useStore.getState().posts
-  const { posts, user } = await getPosts(params)
+  const page = searchParams?.page
+
+  const { posts, user } = await getPosts(params, page)
+
+  const sStatePosts = useStore.getState().posts
+
+  console.log(
+    'esto es del server state ----------------------------->',
+    sStatePosts
+  )
 
   return (
     <div>
       <StoreInitializer posts={posts} user={user} />
-      {posts &&
-        posts.map((post: IsinglePostProps) => (
+      {sStatePosts &&
+        sStatePosts.map((post: IsinglePostProps, idx: number) => (
           <SinglePost
             key={post.id}
             type={post.type}
@@ -112,7 +134,7 @@ export default async function Posts({ params }: { params: { slug: string } }) {
             likes={post.likes}
             owner={post.owner}
             comments={post.comments}
-            isLast={false}
+            isLast={idx === posts.length - 1}
           ></SinglePost>
         ))}
     </div>

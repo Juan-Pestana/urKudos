@@ -1,5 +1,7 @@
 'use client'
 import { useMemo, useState, createRef, useEffect } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 interface IlazyRenderProps {
   threshold?: number
@@ -18,6 +20,14 @@ export default function LazyRender({
 }: IlazyRenderProps) {
   const ref = useMemo(() => createRef<HTMLDivElement>(), [])
 
+  const path = usePathname()
+
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const parPage = searchParams?.get('page')
+
+  const page = parPage ? parseInt(parPage) : 1
+
   const [isVisible, setIsVisible] = useState(false)
   useEffect(() => {
     // shouldn't happen but makes TS happy
@@ -35,6 +45,10 @@ export default function LazyRender({
         if (entry.isIntersecting) {
           setIsVisible(true)
           observer.disconnect()
+          if (isLast) {
+            router.replace(path + `?page=${page + 1}`)
+            router.refresh()
+          }
 
           if (onVisible) {
             onVisible()
