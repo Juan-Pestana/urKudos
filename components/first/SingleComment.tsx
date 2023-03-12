@@ -3,11 +3,11 @@
 import Image from 'next/image'
 import { FaReply } from 'react-icons/fa'
 import { useState } from 'react'
-import { Icomments } from '../../../types/types'
+import { Icomments } from '../../types/types'
 import { motion, AnimatePresence } from 'framer-motion'
 
 import CommentInput from './CommentInput'
-import { pb } from '../../../sevices/pocketBase'
+import { pb } from '../../sevices/pocketBase'
 
 // interface IcommentsProps extends Icomments {
 //   addCommentToPost: (id: string) => void

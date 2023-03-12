@@ -1,5 +1,5 @@
 import SinglePost from './SinglePost'
-import { useStore } from '../../../store/store'
+import { useStore } from '../../store/store'
 
 export default function Posts() {
   const posts = useStore.getState().posts

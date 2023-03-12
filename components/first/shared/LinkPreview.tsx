@@ -1,4 +1,4 @@
-import { Ilink } from '../../../../types/types'
+import { Ilink } from '../../../types/types'
 
 export default function LinkPreview({
   title,

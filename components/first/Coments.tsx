@@ -3,11 +3,11 @@
 import CommentInput from './CommentInput'
 
 import { SingleComment } from './SingleComment'
-import { Iuser, Icomments } from '../../../types/types'
+import { Iuser, Icomments } from '../../types/types'
 import LikesComents from './LikesComents'
 import { useEffect, useState } from 'react'
-import { pb } from '../../../sevices/pocketBase'
-import { useStore } from '../../../store/store'
+import { pb } from '../../sevices/pocketBase'
+import { useStore } from '../../store/store'
 
 const asignResponse = (id: string | Icomments, comments: Icomments[]) => {
   let found = comments.find((c) => c.id === id)

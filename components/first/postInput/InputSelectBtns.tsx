@@ -1,6 +1,6 @@
 import { FaImage, FaVideo, FaLink, FaStar } from 'react-icons/fa'
 
-import { inputType, Iimage } from '../../../../types/types'
+import { inputType, Iimage } from '../../../types/types'
 
 interface IinputSelectBtns {
   image: Iimage | null

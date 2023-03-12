@@ -1,5 +1,5 @@
 'use client'
-import { pb } from '../../../sevices/pocketBase'
+import { pb } from '../../sevices/pocketBase'
 import { useRef, useState, useTransition } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Image from 'next/image'
@@ -9,9 +9,9 @@ import InputSelectBtns from './postInput/InputSelectBtns'
 
 import { FaRegSmile, FaShare } from 'react-icons/fa'
 
-import { Ilink, Iimage, inputType, Iuser } from '../../../types/types'
+import { Ilink, Iimage, inputType, Iuser } from '../../types/types'
 import LinkPreview from './shared/LinkPreview'
-import { useStore } from '../../../store/store'
+import { useStore } from '../../store/store'
 
 export default function PostInput() {
   const [inputType, setInputType] = useState<inputType>('')

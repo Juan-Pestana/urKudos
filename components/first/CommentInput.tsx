@@ -5,9 +5,9 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Picker from '@emoji-mart/react'
 import { FaRegSmile } from 'react-icons/fa'
-import { pb } from '../../../sevices/pocketBase'
-import { useStore } from '../../../store/store'
-import { Icomments, Iuser } from '../../../types/types'
+import { pb } from '../../sevices/pocketBase'
+import { useStore } from '../../store/store'
+import { Icomments, Iuser } from '../../types/types'
 import { Record } from 'pocketbase'
 
 interface IcommentInputProps {

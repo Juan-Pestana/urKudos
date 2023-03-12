@@ -1,8 +1,7 @@
 import { create } from 'zustand'
-import dynamic from 'next/dynamic'
+
 import produce from 'immer'
 import { IsinglePostProps, Icomments, Iuser } from '../types/types'
-import { FaImage, FaVideo, FaLink, FaStar, FaFilm } from 'react-icons/fa'
 
 export const useStore = create<{
   posts: IsinglePostProps[] | []

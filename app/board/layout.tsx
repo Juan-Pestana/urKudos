@@ -1,4 +1,4 @@
-import AsideLinks from '../../components/first/(components)/AsideLinks'
+import AsideLinks from '../../components/first/AsideLinks'
 
 export default function BoardLayout({
   children, // will be a page or nested layout

@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 
-import { IpostContentProps } from '../../../types/types'
+import { IpostContentProps } from '../../types/types'
 import LinkPreview from './shared/LinkPreview'
 
 export default function PostContent({

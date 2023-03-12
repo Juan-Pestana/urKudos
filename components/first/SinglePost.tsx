@@ -4,7 +4,7 @@ import LazyRender from './shared/LazyRender'
 
 import Coments from './Coments'
 
-import { IsinglePostProps } from '../../../types/types'
+import { IsinglePostProps } from '../../types/types'
 import PostLabel from './shared/PostLabel'
 import LikesComents from './LikesComents'
 import CommentInput from './CommentInput'
