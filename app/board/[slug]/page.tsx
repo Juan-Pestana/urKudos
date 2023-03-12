@@ -125,14 +125,7 @@ export default async function FirstPage({
 
       <section className="flex-1">
         <div className="flex flex-col justify-center sm:w-3/4  lg:w-4/5 xl:w-3/5 mx-auto py-3 px-2">
-          <PostInput
-            user={{
-              id: user?.id,
-              name: user?.name,
-              position: user?.department,
-              avatar: user?.avatar,
-            }}
-          />
+          <PostInput />
           <Suspense fallback={<Loading />}>
             <Posts />
           </Suspense>

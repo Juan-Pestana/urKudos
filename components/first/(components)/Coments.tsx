@@ -2,16 +2,12 @@
 
 import CommentInput from './CommentInput'
 
-import SingleComment from './SingleComment'
+import { SingleComment } from './SingleComment'
 import { Iuser, Icomments } from '../../../types/types'
 import LikesComents from './LikesComents'
 import { useEffect, useState } from 'react'
 import { pb } from '../../../sevices/pocketBase'
 import { useStore } from '../../../store/store'
-
-interface Ifix {
-  items: Icomments[]
-}
 
 const asignResponse = (id: string | Icomments, comments: Icomments[]) => {
   let found = comments.find((c) => c.id === id)
@@ -77,52 +73,27 @@ export default function Coments({ postId }: any) {
     }
   }, [comments])
 
-  const addCommentToPost = async (newCommId: string) => {
-    const prevComments = comments?.map((comm) => comm.id)
-
-    if (prevComments) {
-      await pb
-        .collection('posts')
-        .update(postId, { comments: [...prevComments, newCommId] })
-    } else {
-      await pb.collection('posts').update(postId, { comments: [newCommId] })
-    }
-  }
-
   return (
     <>
-      {/* <LikesComents
-        postLikes={[9, 8, 7, 5, 2, 1, 7]}
-        postCommentsNum={comments ? comments.length : 0}
-      /> */}
-      <div className="border-t-2 border-solid border-slate-500 px-1 py-2">
-        {ordComments &&
-          ordComments
-            .filter((comment: Icomments) => !comment.isResponse)
-            .map((comment: Icomments) => (
-              <div key={comment.id}>
-                <SingleComment
-                  key={comment.id}
-                  id={comment.id}
-                  created={comment.created}
-                  text={comment.text}
-                  expand={comment.expand}
-                  isResponse={comment.isResponse}
-                  post={comment.post}
-                  user={comment.user}
-                  addCommentToPost={addCommentToPost}
-                  responses={comment.responses}
-                />
-              </div>
-            ))}
-        <div className="flex gap-2 items-center border-t-2 border-slate-500 border-solid py-3 mt-3">
-          <CommentInput
-            postId={postId}
-            isResponse={false}
-            addCommentToPost={addCommentToPost}
-          />
-        </div>
-      </div>
+      {ordComments &&
+        ordComments
+          .filter((comment: Icomments) => !comment.isResponse)
+          .map((comment: Icomments) => (
+            <div key={comment.id}>
+              <SingleComment
+                key={comment.id}
+                id={comment.id}
+                created={comment.created}
+                text={comment.text}
+                expand={comment.expand}
+                isResponse={comment.isResponse}
+                post={comment.post}
+                user={comment.user}
+                //addCommentToPost={addCommentToPost}
+                responses={comment.responses}
+              />
+            </div>
+          ))}
     </>
   )
 }

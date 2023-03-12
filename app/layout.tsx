@@ -1,12 +1,14 @@
 import './output.css'
-import { Montserrat } from '@next/font/google'
+import { Montserrat, Roboto, Inter } from '@next/font/google'
 import Image from 'next/image'
 import Link from 'next/link'
-import { pb } from '../sevices/pocketBase'
+
 import UserImage from '../components/UserImage'
 
-const custom_font = Montserrat({
+const montserrat = Montserrat({
   subsets: ['latin'],
+  //weight: ['400', '700'],
+  variable: '--font-montserrat',
 })
 
 export default function RootLayout({
@@ -24,8 +26,10 @@ export default function RootLayout({
         `}
       </style> */}
       <head />
-      <body className="bg-gray-800 text-gray-200 h-screen">
-        <header className="flex bg-[#0c1d36] px-20 py-5 items-center">
+      <body
+        className={`bg-gray-800 text-gray-200 h-screen  ${montserrat.variable} font-sans`}
+      >
+        <header className="flex bg-[#0c1d36] px-5 py-5 items-center lg:px-10 xl:px-20">
           <div className="w-40 object-cover">
             <Image
               className="w-full"

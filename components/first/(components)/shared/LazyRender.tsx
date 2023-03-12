@@ -1,10 +1,11 @@
 'use client'
-import { useMemo, useState, createRef, useLayoutEffect, useEffect } from 'react'
+import { useMemo, useState, createRef, useEffect } from 'react'
 
 interface IlazyRenderProps {
   threshold?: number
   rootMargin?: string
   onVisible?: () => void
+  isLast: boolean
   children: React.ReactNode
 }
 
@@ -12,6 +13,7 @@ export default function LazyRender({
   threshold,
   rootMargin,
   onVisible,
+  isLast,
   children,
 }: IlazyRenderProps) {
   const ref = useMemo(() => createRef<HTMLDivElement>(), [])
@@ -47,7 +49,7 @@ export default function LazyRender({
     return () => {
       observer.disconnect()
     }
-  }, [threshold, rootMargin, ref, onVisible])
+  }, [threshold, rootMargin, ref, isLast, onVisible])
 
   return <div ref={ref}>{isVisible ? children : null}</div>
 }

@@ -1,18 +1,19 @@
 'use client'
 
 import { useForm } from 'react-hook-form'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Picker from '@emoji-mart/react'
 import { FaRegSmile } from 'react-icons/fa'
 import { pb } from '../../../sevices/pocketBase'
 import { useStore } from '../../../store/store'
 import { Icomments, Iuser } from '../../../types/types'
+import { Record } from 'pocketbase'
 
 interface IcommentInputProps {
   postId: string
   isResponse: boolean
-  addCommentToPost: (id: string) => void
+
   setResponding?: React.Dispatch<React.SetStateAction<boolean>>
   commentId?: string
   commentResps?: string[]
@@ -25,18 +26,36 @@ interface IuserComment {
 export default function CommentInput({
   postId,
   isResponse,
-  addCommentToPost,
+
   setResponding,
   commentId,
   commentResps,
 }: IcommentInputProps) {
-  const user = pb.authStore.model
+  //const user = pb.authStore.model
 
   const { handleSubmit, register, resetField, getValues, setValue } =
     useForm<IuserComment>()
   const [emojiData, setEmojiData] = useState<any>(null)
   const [showEmoji, setShowEmoji] = useState<boolean>(false)
+  //const [user, setUser] = useState<Iuser | null>(null)
   const addComment = useStore((state) => state.addComment)
+  const user = useStore((state) => state.user)
+  const comments = useStore(
+    (state) => state.posts.find((pt) => pt.id === postId)?.comments
+  )
+
+  //OJO ESTO ES UNA CHAPUZA
+  // useEffect(() => {
+  //   const usr = pb.authStore.model
+
+  //   const user: Iuser = {
+  //     id: usr?.id,
+  //     name: usr?.name,
+  //     position: usr?.department,
+  //     avatar: usr?.avatar,
+  //   }
+  //   setUser(user)
+  // }, [])
 
   const onSubmit = async (data: IuserComment) => {
     try {
@@ -69,9 +88,23 @@ export default function CommentInput({
       } else {
         addComment(postId, newCommentRes)
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log('uuups', error)
+    }
 
     //addComment(postId, newCommentRes)
+  }
+
+  const addCommentToPost = async (newCommId: string) => {
+    const prevComments = comments?.map((comm) => comm.id)
+
+    if (prevComments) {
+      await pb
+        .collection('posts')
+        .update(postId, { comments: [...prevComments, newCommId] })
+    } else {
+      await pb.collection('posts').update(postId, { comments: [newCommId] })
+    }
   }
 
   const addEmoji = (e: any) => {
@@ -86,13 +119,17 @@ export default function CommentInput({
   return (
     <>
       <div className="object-cover">
-        <Image
-          className="rounded-full"
-          src={`http://127.0.0.1:8090/api/files/_pb_users_auth_/${user?.id}/${user?.avatar}`}
-          alt="avatar small"
-          width={50}
-          height={50}
-        />
+        {user ? (
+          <Image
+            className="rounded-full"
+            src={`http://127.0.0.1:8090/api/files/_pb_users_auth_/${user?.id}/${user?.avatar}`}
+            alt="avatar small"
+            width={48}
+            height={48}
+          />
+        ) : (
+          <div className="w-11 h-11"></div>
+        )}
       </div>
       <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
         <div className="relative flex items-center  w-full rounded-xl bg-slate-500 ">

@@ -16,6 +16,7 @@ export default function Posts() {
             likes={post.likes}
             owner={post.owner}
             comments={post.comments}
+            isLast={false}
           ></SinglePost>
         ))}
     </div>

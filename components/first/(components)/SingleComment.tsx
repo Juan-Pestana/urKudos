@@ -7,12 +7,22 @@ import { Icomments } from '../../../types/types'
 import { motion, AnimatePresence } from 'framer-motion'
 
 import CommentInput from './CommentInput'
+import { pb } from '../../../sevices/pocketBase'
 
-interface IcommentsProps extends Icomments {
-  addCommentToPost: (id: string) => void
+// interface IcommentsProps extends Icomments {
+//   addCommentToPost: (id: string) => void
+// }
+
+const usr = pb.authStore.model
+
+const user = {
+  id: usr?.id,
+  name: usr?.name,
+  position: usr?.department,
+  avatar: usr?.avatar,
 }
 
-export default function SingleComment(comment: IcommentsProps) {
+export function SingleComment(comment: Icomments): JSX.Element {
   const [responding, setResponding] = useState<boolean>(false)
   return (
     // if is response comment add ml-16
@@ -37,7 +47,7 @@ export default function SingleComment(comment: IcommentsProps) {
               {comment.user?.name}
             </h5>
             <div className="bg-slate-500 rounded-2xl p-2 flex items-center">
-              <p className="text-slate-200">{comment.text}</p>
+              <p className="text-slate-200 px-2">{comment.text}</p>
               <div
                 className="ml-auto px-2 cursor-pointer text-slate-400"
                 onClick={() => setResponding(!responding)}
@@ -66,7 +76,6 @@ export default function SingleComment(comment: IcommentsProps) {
             <CommentInput
               postId={comment.post}
               isResponse={true}
-              addCommentToPost={comment.addCommentToPost}
               commentId={comment.id}
               commentResps={comment.responses?.map((res) => res.id)}
               setResponding={setResponding}
@@ -82,7 +91,7 @@ export default function SingleComment(comment: IcommentsProps) {
                 key={response.text}
                 id={response.id}
                 created={response.created}
-                addCommentToPost={comment.addCommentToPost}
+                // addCommentToPost={comment.addCommentToPost}
                 text={response.text}
                 expand={response.expand}
                 isResponse={response.isResponse}

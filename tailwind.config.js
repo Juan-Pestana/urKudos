@@ -9,8 +9,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        primary: ['var(--custom-font)', ...fontFamily.sans],
-        serif: ['var(--custom_font)', ...fontFamily.serif],
+        sans: ['var(--font-montserrat)'],
       },
     },
   },

@@ -12,7 +12,7 @@ export default function PostContent({
 }: IpostContentProps) {
   return (
     <>
-      <div className="px-2 py-4 text-xl">{text}</div>
+      <div className="px-2 py-4 text-xl whitespace-pre-line">{text}</div>
       <div className="object-cover">
         {image && (
           <Image

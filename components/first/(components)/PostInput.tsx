@@ -13,11 +13,7 @@ import { Ilink, Iimage, inputType, Iuser } from '../../../types/types'
 import LinkPreview from './shared/LinkPreview'
 import { useStore } from '../../../store/store'
 
-interface IpostInputProps {
-  user: Iuser
-}
-
-export default function PostInput({ user }: IpostInputProps) {
+export default function PostInput() {
   const [inputType, setInputType] = useState<inputType>('')
   const [link, setLink] = useState<Ilink>()
   const [image, setImage] = useState<Iimage | null>(null)
@@ -26,6 +22,8 @@ export default function PostInput({ user }: IpostInputProps) {
   const [showEmoji, setShowEmoji] = useState<boolean>(false)
   const textRef = useRef<HTMLTextAreaElement>(null)
   const router = useRouter()
+
+  const user = useStore((state) => state.user)
 
   const [isPending, startTransition] = useTransition()
   const path = usePathname()?.split('/').at(-1)
@@ -165,7 +163,7 @@ export default function PostInput({ user }: IpostInputProps) {
         className="border-2 border-slate-500 border-solid rounded-lg"
       >
         <div className="flex gap-2 p-3 items-center ">
-          {user && (
+          {user ? (
             <div className="object-cover">
               <Image
                 className="rounded-full"
@@ -175,6 +173,8 @@ export default function PostInput({ user }: IpostInputProps) {
                 height={70}
               />
             </div>
+          ) : (
+            <div className="w-16 h-16"></div>
           )}
 
           <div className="w-full flex gap-2 items-center relative">
