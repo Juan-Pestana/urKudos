@@ -5,12 +5,15 @@ import { IsinglePostProps, Icomments, Iuser } from '../types/types'
 
 export const useStore = create<{
   posts: IsinglePostProps[] | []
+  totalPosts: number
   user: Iuser | null
 
   addPost: (post: IsinglePostProps) => void
   addComment: (id: string, comment: Icomments, updCommId?: string) => void
+  newPostsOnScroll: (newPosts: IsinglePostProps[]) => void
 }>((set, get) => ({
   posts: [],
+  totalPosts: 0,
   user: null,
 
   addPost: (post) => set((state) => ({ posts: [post, ...state.posts] })),
@@ -27,6 +30,12 @@ export const useStore = create<{
           state.posts[index].comments[updIndex].responses.push(comment.id)
         }
         state.posts[index].comments.push(comment)
+      })
+    ),
+  newPostsOnScroll: (newPosts) =>
+    set(
+      produce((state) => {
+        state.posts = state.posts.concat(newPosts)
       })
     ),
 }))

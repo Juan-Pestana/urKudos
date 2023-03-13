@@ -1,13 +1,11 @@
 'use client'
 import { useMemo, useState, createRef, useEffect } from 'react'
-import { usePathname, useSearchParams } from 'next/navigation'
-import { useRouter } from 'next/navigation'
 
 interface IlazyRenderProps {
   threshold?: number
   rootMargin?: string
   onVisible?: () => void
-  isLast: boolean
+
   children: React.ReactNode
 }
 
@@ -15,18 +13,10 @@ export default function LazyRender({
   threshold,
   rootMargin,
   onVisible,
-  isLast,
+
   children,
 }: IlazyRenderProps) {
   const ref = useMemo(() => createRef<HTMLDivElement>(), [])
-
-  const path = usePathname()
-
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const parPage = searchParams?.get('page')
-
-  const page = parPage ? parseInt(parPage) : 1
 
   const [isVisible, setIsVisible] = useState(false)
   useEffect(() => {
@@ -45,10 +35,6 @@ export default function LazyRender({
         if (entry.isIntersecting) {
           setIsVisible(true)
           observer.disconnect()
-          if (isLast) {
-            router.replace(path + `?page=${page + 1}`)
-            router.refresh()
-          }
 
           if (onVisible) {
             onVisible()
@@ -63,7 +49,7 @@ export default function LazyRender({
     return () => {
       observer.disconnect()
     }
-  }, [threshold, rootMargin, ref, isLast, onVisible])
+  }, [threshold, rootMargin, ref, onVisible])
 
   return <div ref={ref}>{isVisible ? children : null}</div>
 }

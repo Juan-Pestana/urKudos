@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { useStore } from '../store/store'
 import { IsinglePostProps, Iuser } from '../types/types'
@@ -13,9 +13,10 @@ interface IstoreProps {
 export default function StoreInitializer({ posts, user }: IstoreProps) {
   const initialized = useRef(false)
 
+  const newPosts = useStore((state) => state.newPostsOnScroll)
+
   if (!initialized.current) {
     if (posts && user) {
-      useStore.setState(() => ({ posts }))
       useStore.setState(() => ({ user }))
     } else {
       useStore.setState({ posts: [] })
@@ -23,5 +24,11 @@ export default function StoreInitializer({ posts, user }: IstoreProps) {
 
     initialized.current = true
   }
+  useEffect(() => {
+    if (posts) {
+      newPosts(posts)
+    }
+  }, [posts])
+
   return null
 }

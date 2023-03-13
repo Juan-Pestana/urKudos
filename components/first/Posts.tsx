@@ -6,6 +6,7 @@ import StoreInitializer from '../../app/StoreInitializer'
 import SinglePost from './SinglePost'
 import { useStore } from '../../store/store'
 import { IsinglePostProps } from '../../types/types'
+import LastPostObserver from './shared/LastPostObserver'
 
 async function initPocketBase() {
   const pb = new PocketBase('http://127.0.0.1:8090')
@@ -43,6 +44,10 @@ const getPosts = async (params: { slug: string }, page?: string) => {
     'star',
   ]
 
+  if (!page) {
+    useStore.setState({ posts: [] })
+  }
+
   const intPage = page ? parseInt(page) : 1
 
   const response: any = await pb.collection('posts').getList(intPage, 5, {
@@ -51,11 +56,7 @@ const getPosts = async (params: { slug: string }, page?: string) => {
     filter: types.includes(slug) ? `type = "${slug}"` : '',
   })
 
-  //console.log(response)
-
   const records = response.items
-
-  const oldPosts = useStore.getState().posts
 
   //CUIDADO CON ESTO
   if (!records || !records.length) {
@@ -91,8 +92,14 @@ const getPosts = async (params: { slug: string }, page?: string) => {
     })
 
     if (posts) {
-      useStore.setState({ posts: [...posts] })
-      return { posts, user: pb.authStore.model }
+      useStore.getState().newPostsOnScroll(posts)
+      console.log('añadiendo posts ==================>')
+
+      return {
+        posts,
+        user: pb.authStore.model,
+        totalPages: response.totalPages,
+      }
     } else {
       return {
         posts: [],
@@ -112,14 +119,9 @@ export default async function Posts({
   //const posts = useStore.getState().posts
   const page = searchParams?.page
 
-  const { posts, user } = await getPosts(params, page)
+  const { posts, user, totalPages } = await getPosts(params, page)
 
   const sStatePosts = useStore.getState().posts
-
-  console.log(
-    'esto es del server state ----------------------------->',
-    sStatePosts
-  )
 
   return (
     <div>
@@ -134,9 +136,13 @@ export default async function Posts({
             likes={post.likes}
             owner={post.owner}
             comments={post.comments}
-            isLast={idx === posts.length - 1}
+            isLast={
+              idx === posts.length - 1 &&
+              posts.length < useStore.getState().totalPosts
+            }
           ></SinglePost>
         ))}
+      <LastPostObserver totalPages={totalPages} />
     </div>
   )
 }

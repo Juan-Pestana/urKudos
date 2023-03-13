@@ -30,6 +30,7 @@ export default async function FirstPage({
             {/* @ts-expect-error Async Server Component */}
             <Posts params={params} searchParams={searchParams} />
           </Suspense>
+          <div className="w-1 h-1"> </div>
         </div>
       </section>
     </>

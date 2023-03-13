@@ -39,7 +39,7 @@ export default function SinglePost(post: IsPPwLast) {
         {/* coments */}
         <LikesComents postLikes={[9, 8, 7, 5, 2, 1, 7]} postId={post.id} />
         <div className="border-t-2 border-solid border-slate-500 font-mono px-1 py-2">
-          <LazyRender isLast={post.isLast}>
+          <LazyRender>
             <Coments postId={post.id} />
           </LazyRender>
         </div>
