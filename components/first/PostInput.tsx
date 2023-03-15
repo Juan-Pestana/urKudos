@@ -174,7 +174,9 @@ export default function PostInput() {
               />
             </div>
           ) : (
-            <div className="w-16 h-16"></div>
+            <div className="w-16 h-16">
+              <img src="" alt="" />
+            </div>
           )}
 
           <div className="w-full flex gap-2 items-center relative">

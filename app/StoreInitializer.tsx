@@ -14,6 +14,9 @@ export default function StoreInitializer({ posts, user }: IstoreProps) {
   const initialized = useRef(false)
 
   const newPosts = useStore((state) => state.newPostsOnScroll)
+  // if (posts) {
+  //   useStore((state) => (state.posts = posts))
+  // }
 
   if (!initialized.current) {
     if (posts && user) {

@@ -8,6 +8,10 @@ import PostInput from '../../../components/first/PostInput'
 import { Suspense } from 'react'
 import Loading from '../loading'
 
+// import { pb } from '../../../sevices/pocketBase'
+// import PocketBase from 'pocketbase'
+// import { cookies } from 'next/headers'
+
 export default async function FirstPage({
   params,
   searchParams,
@@ -26,6 +30,7 @@ export default async function FirstPage({
       <section className="flex-1">
         <div className="flex flex-col justify-center sm:w-3/4  lg:w-4/5 xl:w-3/5 mx-auto py-3 px-2">
           <PostInput />
+
           <Suspense fallback={<Loading />}>
             {/* @ts-expect-error Async Server Component */}
             <Posts params={params} searchParams={searchParams} />

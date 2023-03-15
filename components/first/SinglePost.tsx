@@ -9,11 +9,7 @@ import PostLabel from './shared/PostLabel'
 import LikesComents from './LikesComents'
 import CommentInput from './CommentInput'
 
-interface IsPPwLast extends IsinglePostProps {
-  isLast: boolean
-}
-
-export default function SinglePost(post: IsPPwLast) {
+export default function SinglePost(post: IsinglePostProps) {
   return (
     <div
       className={`border-solid ${

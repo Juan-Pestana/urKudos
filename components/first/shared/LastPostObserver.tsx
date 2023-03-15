@@ -7,14 +7,14 @@ interface IlastPostObserverProps {
   threshold?: number
   rootMargin?: string
   onVisible?: () => void
-  totalPages: number
+  isLast: boolean
 }
 
 export default function LastPostObserver({
   threshold,
   rootMargin,
   onVisible,
-  totalPages,
+  isLast,
 }: IlastPostObserverProps) {
   const [page, setPage] = useState<number>(1)
 
@@ -41,10 +41,6 @@ export default function LastPostObserver({
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           setIsVisible(true)
-          // const parPage = searchParams?.get('page')
-          //  console.log('esta es la page', parPage)
-
-          // const page = parPage ? parseInt(parPage) : 1
 
           if (onVisible) {
             onVisible()
@@ -64,7 +60,7 @@ export default function LastPostObserver({
   }, [threshold, rootMargin, ref, page, path, router, onVisible])
 
   useEffect(() => {
-    if (isVisible && page != totalPages) {
+    if (isVisible && !isLast) {
       router.replace(path + `?page=${page + 1}`)
       setPage((prevPage) => prevPage + 1)
       router.refresh()
@@ -73,5 +69,11 @@ export default function LastPostObserver({
     }
   }, [isVisible])
 
-  return <div ref={ref}></div>
+  return (
+    <>
+      <div ref={ref}></div>
+      {isVisible && isLast && <div className="text-blue-600">SE ACAVO...</div>}
+      {isVisible && !isLast && <div className="text-blue-600">LOADING...</div>}
+    </>
+  )
 }
